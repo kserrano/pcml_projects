@@ -23,17 +23,17 @@ assert(all(abs(tBeta - beta) < eps));
 disp('OK!');
 
 % testing least squares 
-% disp('least squares...');
-% tBeta = leastSquares(y, tX);
-% assert(all(abs(tBeta - beta) < eps));
-% disp('OK!');
+disp('least squares...');
+tBeta = leastSquares(y, tX);
+assert(all(abs(tBeta - beta) < eps));
+disp('OK!');
 
 % testing ridge regression
-% disp('ridge regression...');
-% lambda = 1e-5;
-% tBeta = ridgeRegression(y, tX, lambda);
-% assert(all(abs(tBeta - beta) < eps));
-% disp('OK!');
+disp('ridge regression...');
+lambda = 1e-5;
+tBeta = ridgeRegression(y, tX, lambda);
+assert(all(abs(tBeta - beta) < eps));
+disp('OK!');
 
 % generate binary data
 y = (y>0);
@@ -47,13 +47,13 @@ assert(sum(tY ~= y) / size(y,1) < 0.2);
 disp('OK!');
 
 % testing penalize logistic regression
-% disp('penalized logistic regression...');
-% alpha = 1e-3;
-% lambda = 1e-2;
-% tBeta = penLogisticRegression(y,tX,alpha,lambda);
-% tY = 1.0 ./ (1.0 + exp(-tX * tBeta)) > 0.5;
-% assert(sum(tY ~= y) / size(y,1) < 0.2);
-% disp('OK!');
+disp('penalized logistic regression...');
+alpha = 1e-3;
+lambda = 1e-2;
+tBeta = penLogisticRegression(y,tX,alpha,lambda);
+tY = 1.0 ./ (1.0 + exp(-tX * tBeta)) > 0.5;
+assert(sum(tY ~= y) / size(y,1) < 0.2);
+disp('OK!');
 
 % code for writing csv files
 tY = 1.0 ./ (1.0 + exp(-tX * tBeta));

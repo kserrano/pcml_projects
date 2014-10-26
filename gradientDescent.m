@@ -2,6 +2,8 @@ function [ beta ] = gradientDescent(y, tX, maxIters, alpha, betaStart, lossFun, 
 
 beta = betaStart;
 
+minIters = maxIters/5;
+
 for k = 1:maxIters
     
 
@@ -19,20 +21,16 @@ for k = 1:maxIters
     g = gradFun( y, tX, beta ) + 2*lambda*tempBeta;
     
     oldBeta = beta;
-    oldBetaNorm = sqrt(sum((oldBeta).^2));
     
     % gradient descen update
-
     beta = beta - alpha*g;
-    newBetaNorm = sqrt(sum((beta).^2));
     
     % tests whether the descent has converged ()
     
     % when the norm of the beta changed by less than 1/1000, time to stop
-    if (abs(newBetaNorm-oldBetaNorm)/oldBetaNorm < 10^-3)
+    if (min(abs(beta-oldBeta)./oldBeta) < 10^-3) && (k > minIters)
         break
     end
-
 
     % print current corst and beta
     disp(['cost: ' num2str(L) ' and beta values ' num2str(beta(:)')]);
