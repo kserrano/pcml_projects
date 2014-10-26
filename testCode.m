@@ -17,7 +17,7 @@ eps = 1e-2;
 
 % test least squares via gradient descent
 disp('least squares via gradient descent...');
-alpha = 1;
+alpha = 0.05;
 tBeta = leastSquaresGD(y, tX, alpha);
 assert(all(abs(tBeta - beta) < eps));
 disp('OK!');
