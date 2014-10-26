@@ -13,12 +13,12 @@ for k = 1:maxIters
     
     % computing the loss using the given function, plus norm squared of
     % beta * lambda as a regularization term
-    L = lossFun( y, tX, beta ) + lambda*tempBetaNorm^2;
+    L = lossFun( y, tX, beta ) + 1/2*1/length(y)*lambda*tempBetaNorm^2;
     
     
     % comuting the gradient using the given function, if regularizing then
     % the regularization term's derivative is 2*lambda*beta
-    g = gradFun( y, tX, beta ) + 2*lambda*tempBeta;
+    g = gradFun( y, tX, beta ) + 1/length(y)*lambda*tempBeta;
     
     oldBeta = beta;
     
