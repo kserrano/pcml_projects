@@ -3,7 +3,7 @@ function g = computeGradientLS( y, tX, beta )
 %   
 N = length(y);
 e = y - tX*beta;
-g = -tX'*e/N;
+g = -(1/N)*(tX'*e);
 
 end
 

@@ -3,7 +3,7 @@ function L = computeCostLS( y, tX, beta )
 
 N = length(y);
 e = y - tX*beta;
-L = e'*e/(2*N);
+L = (e'*e)/(2*N);
 
 end
 

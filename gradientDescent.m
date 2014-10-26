@@ -22,6 +22,7 @@ for k = 1:maxIters
     oldBetaNorm = sqrt(sum((oldBeta).^2));
     
     % gradient descen update
+
     beta = beta - alpha*g;
     newBetaNorm = sqrt(sum((beta).^2));
     
@@ -31,6 +32,7 @@ for k = 1:maxIters
     if (abs(newBetaNorm-oldBetaNorm)/oldBetaNorm < 10^-3)
         break
     end
+
 
     % print current corst and beta
     disp(['cost: ' num2str(L) ' and beta values ' num2str(beta(:)')]);
