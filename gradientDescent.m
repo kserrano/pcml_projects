@@ -28,7 +28,7 @@ for k = 1:maxIters
     % tests whether the descent has converged ()
     
     % when the norm of the beta changed by less than 1/1000, time to stop
-    if (min(abs(beta-oldBeta)./oldBeta) < 10^-3) && (k > minIters)
+    if (max(abs(beta-oldBeta)./oldBeta) < eps) && (k > minIters)
         break
     end
 

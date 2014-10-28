@@ -6,7 +6,7 @@ lambda = 0;
 betaStart = zeros(size(tX,2),1);
 
 beta = gradientDescent(y,tX, maxIters, alpha, betaStart, @computeCostLS, ...
-    @computeGradientLS,lambda, 0);
+    @computeGradientLS,lambda, 1);
 
 end
 
