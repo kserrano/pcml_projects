@@ -1,4 +1,4 @@
-function [ beta ] = gradientDescent(y, tX, maxIters, alpha, betaStart, lossFun, gradFun, lambda)
+function [ beta ] = gradientDescent(y, tX, maxIters, alpha, betaStart, lossFun, gradFun, lambda, verbose)
 
 beta = betaStart;
 
@@ -32,12 +32,16 @@ for k = 1:maxIters
         break
     end
 
-    % print current corst and beta
-    disp(['cost: ' num2str(L) ' and beta values ' num2str(beta(:)')]);
+    if verbose
+        % print current corst and beta
+        disp(['cost: ' num2str(L) ' and beta values ' num2str(beta(:)')]);
+    end
 
 end
 
-    disp(' ')
-    disp(['finished descent after ' num2str(k) ' iterations'])
+    if verbose
+        disp(' ')
+        disp(['finished descent after ' num2str(k) ' iterations'])
+    end
 end
 

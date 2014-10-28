@@ -8,6 +8,6 @@ maxIters = 2000;
 betaStart = zeros(size(tX, 2), 1);
 
 beta = gradientDescent(y, tX, maxIters, alpha, betaStart,...
-    @computeCostLogReg, @computeGradientLogReg, lambda);
+    @computeCostLogReg, @computeGradientLogReg, lambda, 0);
 
 end
