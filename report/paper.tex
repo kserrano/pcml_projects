@@ -1,0 +1,66 @@
+\documentclass{article} % For LaTeX2e
+% We will use NIPS submission format
+\usepackage{nips13submit_e,times}
+% for hyperlinks
+\usepackage{hyperref}
+\usepackage{url}
+% For figures
+\usepackage{graphicx} 
+\usepackage{subfigure} 
+% math packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsopn}
+\usepackage{ifthen}
+\usepackage{natbib}
+
+\title{Project-I by Group MexicoCity}
+
+\author{
+Kevin Serrano\\EPFL\\
+\texttt{kevin.serrano@epfl.ch} \And Youssef El Baba\\EPFL\\
+\texttt{youssef.baba@epfl.ch} \And Alexandre Helfre\\EPFL\\
+\texttt{alexandre.helfre@epfl.ch}
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\nipsfinalcopy 
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In this report, we discuss our implementation and findings for the project-I. \textcolor{red}{Todo at the end}
+
+
+\end{abstract}
+\section{Five functions}
+\begin{itemize}
+\item \textit{leastSquaresGD(y,tX,alpha)} : Least squares using gradient descent, alpha is the step-size
+\item \textit{leastSquares(y,tX)} : Least squares using normal equations
+\item \textit{ridgeRegression(y,tX,lambda)} : Ridge regression using normal equations, lambda is the regularization coefficient
+\item \textit{logisticRegression(y,tX,alpha)} : Logistic regression using gradient descent or Newton's method
+\item \textit{penLogisticRegression(y,tX,alpha,lambda)} : Penalized logistic regression 
+
+\end{itemize}
+
+
+
+\section{Summary}
+In this report, we analyzed a regression dataset and found that ridge regression is a reasonable fit. We estimate that the average test error is 1.213 ($\pm$ 0.02). We tried some feature transformation and found that there is a small improvement giving us a test error of around 1.198 ($\pm$ 0.015). This improvement, however, is not significant.
+
+
+\subsubsection*{Acknowledgments}
+
+
+\subsubsection*{References}
+
+\end{document}
