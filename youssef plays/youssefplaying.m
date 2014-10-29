@@ -4,8 +4,8 @@ clc
 clear all
 close all
 
-%load('MexicoCity_regression.mat')
-load('MexicoCity_classification.mat')
+load('MexicoCity_regression.mat')
+%load('MexicoCity_classification.mat')
 
 N = length(y_train); % data size
 D = size(X_train, 2); % dimensionality
@@ -66,19 +66,32 @@ title('correlated variables with coeff, 0 otherwise, pearson')
 
 %% preliminary fitting (regression)
 
+ranktX = rank(tX);
+disp(' ');
+disp(['rank of data columns is :' num2str(ranktX)]);
+
+% toggling categorical variable encoding
+tX = tX(:,[1 (normInputVars+1)]);
+
+% stupid mean fitting
+betaMean = mean(y_train);
+rmseWRTmean = rmse(y_train, betaMean);
+disp(' ');
+disp(['simply taking the mean gives Training rmse = ' num2str(rmseWRTmean)]);
+
 % simple least squares
 betaLS = leastSquares(y_train, tX);
 y_hatLS = tX*betaLS;
 LSrmse = rmse(y_hatLS, y_train);
 disp(' ');
-disp(['simple LS gives rmse = ' num2str(LSrmse)]);
+disp(['simple LS gives Training rmse = ' num2str(LSrmse)]);
 
 alpha = 0.01;
 betaLSGD = leastSquaresGD(y_train, tX, alpha);
 y_hatLSGD = tX*betaLSGD;
 LSGDrmse = rmse(y_hatLSGD, y_train);
 disp(' ');
-disp(['gradient LS gives rmse = ' num2str(LSGDrmse)]);
+disp(['gradient LS gives Training rmse = ' num2str(LSGDrmse)]);
 
 noOfLambdas = 10;
 RRrmses = zeros(1, noOfLambdas);
@@ -99,6 +112,10 @@ end
 % Form (y,tX) to get regression data in matrix form
 tX = [ones(N,1) X_train(:, :)];
 
+ranktX = rank(tX);
+disp(' ');
+disp(['rank of data columns is :' num2str(ranktX)]);
+
 % simple logistic regression
 alpha = 0.1;
 betaLR = logisticRegression(y_train,tX,alpha);
@@ -106,7 +123,7 @@ temp = tX*betaLR;
 y_hatLS = temp > 0;
 LSrmse = rmse(y_train, y_hatLS);
 disp(' ');
-disp(['simple Logistic regression gives rmse = ' num2str(LSrmse)]);
+disp(['simple Logistic regression gives Training rmse = ' num2str(LSrmse)]);
 
 noOfLambdas = 10;
 RRrmses = zeros(1, noOfLambdas);
@@ -119,6 +136,6 @@ for i = 1:noOfLambdas
     temp = tX*betaPLR;
     y_hatPLR = temp > 0;
     RRrmses(i) = rmse(y_train, y_hatPLR);
-    disp(['for lambda = ' num2str(lambdas(i)) ' ridge regression fits with RMSE ' num2str(RRrmses(i))])
+    disp(['for lambda = ' num2str(lambdas(i)) ' penalized logistic regression fits with training RMSE ' num2str(RRrmses(i))])
     
 end

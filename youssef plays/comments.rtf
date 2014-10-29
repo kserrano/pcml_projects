@@ -8,4 +8,13 @@
 \
 Kstest for normality only confirms that first 33 input variables are indeed random. something fishy about the variables 34-42 that SEEM normal (through histogram distribution)  but are not.\
 \
-simply applying LS on the data (with no cleaning) yields RMSE of  0.48244, ridge regression increases it somewhat but stays the same. Compared with the dynamic range of the normalized y_train (-1.5 to 2.94) it\'92s not THAT important}
+tX has rank 49 for regression, so no redundancy in variables there\
+tX for regression has rank 36, so 48-35 = 13 of the original data dimensions are transforms or redundant wrt to others -> use PENALIZED logistic regressions and NOT normal logistic regression\
+\
+normalizing the variables 1-33 for regression, plus y, others are categorical\
+\
+taking the mean gives an RMSE of 0.99964 (over normalized y)\
+\
+simply applying LS on the data (with no cleaning) yields RMSE of  0.48244, ridge regression increases it somewhat but stays the same. Compared with the dynamic range of the normalized y_train (-1.5 to 2.94) it\'92s not THAT important. But RMSE is still cut by half, so data IS meangful.\
+\
+Tried ignoring the categorical variables for regression, RMSE nearly DOUBLED (went from 0.48244 using LS to 0.84526), so clearly they should NOT be discarded. We might want to modify them, or transform them using dummy variables though.}
