@@ -138,7 +138,9 @@ for i = 1:noOfLambdas
     
 end
 
-% usung the 18th and 34th variables transforms
+% usung the 18th and 34th variables transforms BE CAREFUL NOT TO REPRODUCE
+% SAME COLUMN TWICE AS MYPOLY REPRODUCES A POLYNOMIAL OF DEGREE ONE (SO THE
+% VARIABLE ITSELF)
 txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6)];
 [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
 @leastSquares, @rmse, [], 4, [], 100);
