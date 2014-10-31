@@ -1,4 +1,4 @@
-function [lo] = logodds(y, p)
+function [lo] = logLoss(y, p)
 %LOGODDS compute the log odds for an output vector y and a vector
 %probability p
 
