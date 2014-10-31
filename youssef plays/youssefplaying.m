@@ -71,7 +71,7 @@ disp(' ');
 disp(['rank of data columns is :' num2str(ranktX)]);
 
 % toggling categorical variable encoding
-tX = tX(:,[1 (normInputVars+1)]);
+%tX = tX(:,[1 (normInputVars+1)]);
 
 % stupid mean fitting
 betaMean = mean(y_train);
