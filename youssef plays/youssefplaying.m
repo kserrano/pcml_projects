@@ -4,8 +4,8 @@ clc
 clear all
 close all
 
-%load('MexicoCity_regression.mat')
-load('MexicoCity_classification.mat')
+load('MexicoCity_regression.mat')
+%load('MexicoCity_classification.mat')
 
 N = length(y_train); % data size
 D = size(X_train, 2); % dimensionality
@@ -47,7 +47,7 @@ catVars = find(noOfVariableValues < maxClasses);
 meanX = mean(X_train);
 
 % 42 first features seem to be gaussian distributed, can be normalized
-normInputVars = setDiff(1:D, catVars);
+normInputVars = setdiff(1:D, catVars);
 
 % normalizing the input variables
 X_train(:, normInputVars) = X_train(:, normInputVars) - repmat(meanX(normInputVars), N, 1);
@@ -62,21 +62,38 @@ tX = [ones(N,1) X_train(:, :)];
 
 %% correlation & normal distribution analysis
 
-statistics = [y_train X_train];
+% taking the 18th and 34th variables, and any polynomial transform of them,
+% and checking their pearson correlation with the output
+
+txSpecial = [myPoly(X_train(:, 18),5) myPoly(X_train(:, 34),10) ];
+statistics = [y_train txSpecial];
+% use this line if u want to plot the correlations for all the data instead
+%statistics = [y_train X_train];
 
 [ spearmanCoeffs, spearmanSig, pearsonCoeffs, pearsonSig,...
     normalityTests, corrExistence, corrSuitability] = ...
-    computeCorrelationCoeffs( statistics, D+1);
+    computeCorrelationCoeffs( statistics, size(statistics, 2));
 
 normalityTests = circshift(normalityTests, -1);
 
 figure;
-stem(spearmanSig.*spearmanCoeffs)
-title('correlated variables with coeff, 0 otherwise, spearman')
+spearmanGraph = abs(spearmanSig.*spearmanCoeffs);
+stem(spearmanGraph)
+title('correlated variables with coeff, 0 otherwise, spearman, , in absolute value')
 
 figure;
-stem(pearsonSig.*pearsonCoeffs)
-title('correlated variables with coeff, 0 otherwise, pearson')
+pearsonGraph = abs(pearsonSig.*pearsonCoeffs);
+stem(pearsonGraph)
+title('correlated variables with coeff, 0 otherwise, pearson, in absolute value')
+
+figure;
+stem(spearmanGraph.*pearsonGraph)
+title('correlated variables with coeff, 0 otherwise, pearson x spearman, in absolute value')
+
+figure;
+stem(mean([spearmanGraph; pearsonGraph], 1))
+title('correlated variables with coeff, 0 otherwise, mean(pearson, spearman), in absolute value')
+
 
 %% preliminary fitting (regression)
 
@@ -120,6 +137,14 @@ for i = 1:noOfLambdas
     disp(['for lambda = ' num2str(lambdas(i)) ' ridge regression fits with RMSE ' num2str(RRrmses(i))])
     
 end
+
+% usung the 18th and 34th variables transforms
+txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6)];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th, gives test RMSE: ' num2str(meanErrTe)])
 
 %% preliminary fitting (classification)
 
