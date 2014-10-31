@@ -10,11 +10,15 @@ Kstest for normality only confirms that first 33 input variables are indeed rand
 \
 tX has rank 49 for regression, so no redundancy in variables there\
 tX for regression has rank 36, so 48-35 = 13 of the original data dimensions are transforms or redundant wrt to others -> use PENALIZED logistic regressions and NOT normal logistic regression\
+UPDATE: I was wrong, for classification there are 35 variables, + the one vector it SHOULD give rank 36 so the tX is NOT ill conditioned\
 \
 normalizing the variables 1-33 for regression, plus y, others are categorical\
+UPDATE: written a code to check which variables are categorical (basically the ones having less than 15 possible values). For the regression data: variables 35-48 included are categorical (so 33 IS NOT categorical and should be normalized). For the classification: only variables 9, 22, 25.\
 \
 taking the mean gives an RMSE of 0.99964 (over normalized y)\
 \
-simply applying LS on the data (with no cleaning) yields RMSE of  0.48244, ridge regression increases it somewhat but stays the same. Compared with the dynamic range of the normalized y_train (-1.5 to 2.94) it\'92s not THAT important. But RMSE is still cut by half, so data IS meangful.\
+simply applying LS on the data (with no cleaning) yields RMSE of  0.48244, ridge regression increases it somewhat but stays the same. Compared with the dynamic range of the normalized y_train (-1.5 to 2.94) it\'92s not THAT important. But RMSE is still cut by half, so data IS meaningful.\
 \
-Tried ignoring the categorical variables for regression, RMSE nearly DOUBLED (went from 0.48244 using LS to 0.84526), so clearly they should NOT be discarded. We might want to modify them, or transform them using dummy variables though.}
+Tried ignoring the categorical variables for regression, RMSE nearly DOUBLED (went from 0.48244 using LS to 0.84526), so clearly they should NOT be discarded. We might want to modify them, or transform them using dummy variables though.\
+\
+}

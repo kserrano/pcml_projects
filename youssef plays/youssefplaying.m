@@ -4,8 +4,8 @@ clc
 clear all
 close all
 
-load('MexicoCity_regression.mat')
-%load('MexicoCity_classification.mat')
+%load('MexicoCity_regression.mat')
+load('MexicoCity_classification.mat')
 
 N = length(y_train); % data size
 D = size(X_train, 2); % dimensionality
@@ -26,6 +26,20 @@ figure;
 hist(y_train);
 title('hisogram of output variable')
 
+%% categorical variable detection
+
+noOfVariableValues = zeros(D, 1);
+
+% SUPPOSING categorial variables have AT MOST 15 classes
+maxClasses = 15;
+
+for i=1:D
+    test = unique(X_train(:, i));
+    noOfVariableValues(i) = length(test);
+end
+
+catVars = find(noOfVariableValues < maxClasses);
+
 %% normalizing the features
 
 % for regression variables
@@ -33,14 +47,14 @@ title('hisogram of output variable')
 meanX = mean(X_train);
 
 % 42 first features seem to be gaussian distributed, can be normalized
-normInputVars = 1:33;
+normInputVars = setDiff(1:D, catVars);
 
 % normalizing the input variables
 X_train(:, normInputVars) = X_train(:, normInputVars) - repmat(meanX(normInputVars), N, 1);
 stdX = std(X_train);
 X_train(:, normInputVars) = X_train(:, normInputVars)./repmat(stdX(:, normInputVars), N, 1);
 
-% normalizing the output variable
+% normalizing the output variable, comment out for classification
 y_train = (y_train-mean(y_train))/std(y_train);
 
 % Form (y,tX) to get regression data in matrix form
