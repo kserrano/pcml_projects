@@ -33,12 +33,16 @@ noOfVariableValues = zeros(D, 1);
 % SUPPOSING categorial variables have AT MOST 15 classes
 maxClasses = 15;
 
+categorialVariableClasses = cell(81, D+1);
+
 for i=1:D
-    test = unique(X_train(:, i));
-    noOfVariableValues(i) = length(test);
+    temp = unique(X_train(:, i));
+    categorialVariableClasses{i} = temp;
+    noOfVariableValues(i) = length(temp);
 end
 
 catVars = find(noOfVariableValues < maxClasses);
+categorialVariableClasses = categorialVariableClasses(catVars);
 
 %% normalizing the features
 
@@ -60,12 +64,21 @@ y_train = (y_train-mean(y_train))/std(y_train);
 % Form (y,tX) to get regression data in matrix form
 tX = [ones(N,1) X_train(:, :)];
 
+%% replacing categorical variables with dummy ones
+
+dummyCategoricalVariables = dummyvar(X_train(:, catVars)+1);
+%txExt = [txExt(:, setdiff(1:(D+1), catVars)) dummyCategoricalVariables];
+
 %% correlation & normal distribution analysis
 
 % taking the 18th and 34th variables, and any polynomial transform of them,
 % and checking their pearson correlation with the output
 
-txSpecial = [myPoly(X_train(:, 18),5) myPoly(X_train(:, 34),10) ];
+% use the folowing line for testing dummy variables's correlation with the
+% output, comment out the next assignment to txSpecial
+txSpecial = dummyCategoricalVariables;
+
+%txSpecial = [myPoly(X_train(:, 18),5) myPoly(X_train(:, 34),10) ];
 statistics = [y_train txSpecial];
 % use this line if u want to plot the correlations for all the data instead
 %statistics = [y_train X_train];
@@ -76,24 +89,23 @@ statistics = [y_train txSpecial];
 
 normalityTests = circshift(normalityTests, -1);
 
-figure;
-spearmanGraph = abs(spearmanSig.*spearmanCoeffs);
-stem(spearmanGraph)
-title('correlated variables with coeff, 0 otherwise, spearman, , in absolute value')
+% figure;
+% spearmanGraph = abs(spearmanSig.*spearmanCoeffs);
+% stem(spearmanGraph)
+% title('correlated variables with coeff, 0 otherwise, spearman, , in absolute value')
 
 figure;
 pearsonGraph = abs(pearsonSig.*pearsonCoeffs);
 stem(pearsonGraph)
 title('correlated variables with coeff, 0 otherwise, pearson, in absolute value')
 
-figure;
-stem(spearmanGraph.*pearsonGraph)
-title('correlated variables with coeff, 0 otherwise, pearson x spearman, in absolute value')
-
-figure;
-stem(mean([spearmanGraph; pearsonGraph], 1))
-title('correlated variables with coeff, 0 otherwise, mean(pearson, spearman), in absolute value')
-
+% figure;
+% stem(spearmanGraph.*pearsonGraph)
+% title('correlated variables with coeff, 0 otherwise, pearson x spearman, in absolute value')
+% 
+% figure;
+% stem(mean([spearmanGraph; pearsonGraph], 1))
+% title('correlated variables with coeff, 0 otherwise, mean(pearson, spearman), in absolute value')
 
 %% preliminary fitting (regression)
 
@@ -147,6 +159,56 @@ txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6)];
 meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using transforms on 18th and 34th, gives test RMSE: ' num2str(meanErrTe)])
+
+%% adding good dummy variables
+clc
+
+significantRegressionDummyVars = [29 39 41];
+
+% removing categorical variables
+txExt1 = [txExt(:, setdiff(1:size(txExt, 2), catVars))];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt1,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th without categorical ones, gives test RMSE: ' num2str(meanErrTe)]);
+
+% removing categorical variables and keeping only the 44th and 47th as they
+% are
+txExt2 = [txExt(:, setdiff(1:size(txExt, 2), catVars))  tX(:, [44 47]) ];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt2,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th with only correlated categorical ones (taken as-is), gives test RMSE: ' num2str(meanErrTe)]);
+
+% removing categorical variables and keeping only the 44th and 47th by
+% takin all their issues dummy variables
+txExt2 = [txExt(:, setdiff(1:size(txExt, 2), catVars))  dummyvar(tX(:, [44 47])+1) ];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt2,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th with only correlated categorical ones (taking all their dummy variables), gives test RMSE: ' num2str(meanErrTe)]);
+
+% removing categorical variables and keeping only the 44th and 47th by
+% takin only their dummy variables that are correlated with the output
+txExt3 = [txExt(:, setdiff(1:size(txExt, 2), catVars)) dummyCategoricalVariables(:, significantRegressionDummyVars) ];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt3,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th with only correlated categorical ones (taking good classes only), gives test RMSE: ' num2str(meanErrTe)]);
+
+%% removing kevin's bad (spurious, to ignore) input variables
+
+regressionSpuriousVariables = [5    15    17    36    37    39    41    42    43    44    46    47    49];
+txExt3 = [txExt(:, setdiff(1:size(txExt, 2), regressionSpuriousVariables)) ];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt3,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th while also removing spurious ones, gives test RMSE: ' num2str(meanErrTe)]);
 
 %% preliminary fitting (classification)
 

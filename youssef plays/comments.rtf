@@ -39,4 +39,12 @@ We testing taking the squares of the 18th and the 34th variable (individually) a
 \
 By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the mypoly function, and then measuring their pearson correlation coefficient with the output, we could see that (check graph) the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.48244\
 \
--  }
+Saturday nov 1st:\
+\
+tried dummy variables for all regression categorical ones. I could only find a significant linear correlation (using spearman) for the 2nd class of the variable 44, 2nd & 4th class of the 47th.\
+\
+Tried keeping the aforementioned polynomial transforms, and removed ALL categorical variables. Test error actually went down to 0.33043. Adding back the mentioned dummy variables 44 and 47 actually increased test error to 0.33105. Adding only the specifically mentioned (above) classes indicator dummy variables led the tX matrix to become ill conditioned.\
+\
+I guess even though they are somewhat correlated with the output, these dummy variable spell trouble for the predictor\'85\
+\
+Removing kevin\'92s variables to ignore actually increased the test Error to 0.33209, something\'92s wrong with the ignoring strategy then}
