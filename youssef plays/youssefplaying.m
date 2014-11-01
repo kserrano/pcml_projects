@@ -160,6 +160,13 @@ meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using transforms on 18th and 34th, gives test RMSE: ' num2str(meanErrTe)])
 
+txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6) (X_train(:, 34)-min(X_train(:, 34))).^0.5];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th + sqrt of 34th, gives test RMSE: ' num2str(meanErrTe)])
+
 %% adding good dummy variables
 clc
 
