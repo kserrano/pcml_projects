@@ -17,6 +17,8 @@ p = p(:);
 N = length(y);
 
 % compute the logLoss
-lo = -(1/N).*sum((y.*log(p)+(1-p).*log(1-p)));
+% sometimes p = 1, then the log is not defined. So we ignore those points
+% by using the nanmean function, which doesn't take NaNs into account
+lo = -nanmean((y.*log(p)+(1-y).*log(1-p)));
 
 
