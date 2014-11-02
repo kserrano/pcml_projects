@@ -69,11 +69,21 @@ Most variables normally distributed with various means. The first 34 input varia
 WHY WE ARE USING PEARSON:
 To help us with the task of finding which transforms could be useful in better predicting the output from the given predictors, we decided to use the help of the pearson linear correlarion coefficient. This coefficient basically gives a number indicating the strength (in its absolute value) of a linear model fit between the input and the data. Obviously, we could visually inspect multiple scatter plots between each variable and the output, and also with the other variables, but this can (for obvious reasons) be somewhat of an overkill and could lead to subjective mistakes. The pearson coefficient allows us to selectively choose wich variables (and which possible transforms accordingly) could be used to fit a good model, in a very fast manner (simply adding columns to tX and checking their corrrelation coefficients). Using this strategy, we could rapidly pinpoint which transforms were probably most useful. The spearman coefficient also performs a similar computation, but tests not only the linear relationship between variables, including any exponential relationship or such. Therefore for some transformations, even though a linearly-fit model would not find them useful, the spearman coefficient would rank them as correlated ( to the output and other variables) as the variable they are coming from.\\
 
-We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables.\textcolor{red}{More details to add here :youssef text}
+We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables.
 \section{Least Squares}
-Applying the least squares method on the data without cleaning yields a $RMSE$ of $0.48244$.
-\section{Best method : Ridge Regression}
-\textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}
+The mean gives a $RMSE$ of 0.99964, over normalized $\mathbf{y}$.\\
+
+Applying the least squares method on the data without cleaning yields a $RMSE$ of $0.48244$. Given that, we see that the $RMSE$ is cut by half so the input data are meaningful.
+\section{Ridge Regression}
+\textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}\\
+
+By visually inspecting the Pearson correlation graphs, a good strategy to spot well correlated input variables was to take the intersection of the two methods (we’re only considering ). To do that, we tried multiplying the two coefficients (for each variable) and taking the mean. Both strategies clearly showed the 18th and 34th variables are best correlated. We can limit our variable transform to these two (we only have 1400 data points, so with a dimension 48 we’re already lacking data, by introducing spurious transforms we would be adding fuel to the fire and causing overfitting.)
+\section{Logistic Regression}
+We tried to use simple logistic regression using all the variable, the estimated $RMSE$ test error was 0.27099. Also we tried using sqrt on the 11th and 24th variables which actually improves our test error to 0.26779. We can also use squares of the variables instead of the square root and applying this alone the test error decreased to 0.26715. Adding both transformations got us a decrease to a test error of 0.26474. We also tried to remove all categorical variables as we did in regression, but the test error increased to 0.3396, so their information was needed and cannot be ignored.
+
+We then found that, since Pearson correlation predicted better correlation of square roots than squares but squares were actually better able to decrease test error, it might be a good idea to include 3rd degree transforms of the 11th and 24th variables. Added them, the test error increased to 0.26656. Thus taking higher orders doesn’t seem to help.
+
+\textcolor{red}{to section transformation?}We then tried to include a dummy variable transform, but that increased the test error significantly to 0.32625, therefore we’re not going to use them.
 \section{Feature transformations}
 \textcolor{red}{Different transformation (myPoly, sqrt, etc)}
 \section{Summary}
