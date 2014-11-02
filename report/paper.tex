@@ -62,6 +62,7 @@ We have two data set. One for regression and one for classification. \begin{desc
 
 \end{description}
 
+\textcolor{red}{need to move that somewhere}Note that all the gradient descent methods used the eps threshold (machine dependant) in Matlab in the gradient descent function, to allow for a maximum number of iterations. This might make the gradient descent process slow though, so feel free to set another number if needed. We changed it later to 1/1000, so the numbers for the test Errors might be different depending on this parameter when you run the code (the global trends are the same though), since the number of iterations will be different.
 
 \section{Data visualization and cleaning}
 \textcolor{red}{Histogram, correlation, applied methods}\\
@@ -95,7 +96,17 @@ We then found that, since Pearson correlation predicted better correlation of sq
 
 \textcolor{red}{to section transformation?}We then tried to include a dummy variable transform, but that increased the test error significantly to 0.32625, therefore we’re not going to use them.
 \section{Feature transformations}
-\textcolor{red}{Different transformation (myPoly, sqrt, etc)}
+\textcolor{red}{Different transformation (myPoly, sqrt, dummyvar,etc)}\\
+
+We tried dummy variables for all regression categorical ones. We could only find a significant linear correlation (using Spearman) for the 2nd class of the variable 44, 2nd and 4th class of the 47th.\\
+
+We tried keeping the polynomial transforms and removed all categorical variables. The test error went down to 0.33043.\\
+
+Adding back the mentioned dummy variables 44 and 47 actually increased the test error to 0.33105. This lead the matrix $\mathbf{\tilde{X}}$ to become ill conditioned.\\
+
+We also tried adding square root of the 18th and 34th variable, that means $\sqrt{|X_{n18}|}$ and $\sqrt{|X_{n34}|}$ of $\mathbf{X}$. With the 18th the test error went up to 0.32137 and with the 34th it went up to 0.39349. So this doesn't help and we decided not tu use square root transformation.\\
+
+We decided that we’re going to ignore all categorical variables for regression, and also all the un-correlated variables, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
 \section{Summary}
 \textcolor{red}{summarize in a few lines and write down all the final results}
 For the regression, we saw that the best method was Ridge Regression. The best parameter was $\lambda =  39.0694$\textcolor{red}{?} and we achieved a test error of 0.3073.\\
