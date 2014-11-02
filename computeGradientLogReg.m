@@ -1,5 +1,6 @@
 function [ gradient ] = computeGradientLogReg( y, tX, beta )
-% computes the MSE gradient for the given data points
+% computes the gradient for logistic regression, using the given formulas
+% in the lectures
 
 gradient = tX'*(sigmoid(tX*beta) - y)/length(y);
 

@@ -1,5 +1,5 @@
 function loss = loss01( y,haty )
-%LOSS01 computes the 0-1 loss 
+% implements the 0-1 loss error metric given in the project page
 
 N = length(y);
 loss = 1/N * sum(y~=haty);

@@ -1,23 +1,28 @@
-function [errorTr, errorTe] = genericKCV( y, tX,...
+function [errorsTr, errorsTe] = genericKCV( y, tX,...
     fittingFunction, errorFunction, lambdas, K, alpha, noOfSeeds)
 % generic cross-validation function used to estimate the best parameter
-% (the one giving the best Test/Train error pair. Can only test 2
-% parameters at simultaneously at most, do NOT use vary more.
-% If no parameters to validate is given, then the function simply gives back
-% a cross-validation issued estimate of the test Error
-
-% split data in K fold (we will only create indices)
+% (the one giving the best Test/Train error pair (more emphasis on the
+% latter). It can be used with any fitting method (e.g. least squares) and
+% any error metric (e.g. rmse) to cross validate a parameter lambda (for ridgeregression for example)
+% or to simply estimate testError (in that case only a specific value of
+% lambda should be used, not multiple ones). To actually get the test error
+% at the end you simply need to take the mean of errorsTe in that case.
+% Alpha should also be given when the fitting function requires it, and the
+% noOfSeeds determines the number of test curves being averaged (more makes
+% the cross-validation more stable, but takes longer). K is the number of
+% folds
 
 % if lambdas is empty, then simply the code validates other parameters or
 % estimates test error
 noOfLambdas = max(1, length(lambdas));
 
-errorTr = zeros(noOfSeeds, K, noOfLambdas);
-errorTe = zeros(noOfSeeds, K, noOfLambdas);
+errorsTr = zeros(noOfSeeds, K, noOfLambdas);
+errorsTe = zeros(noOfSeeds, K, noOfLambdas);
 
 % K-fold cross validation
 for s = 1:noOfSeeds
     
+    % split data in K fold (we will only create indices)
     setSeed(s);
     N = size(y,1);
     idx = randperm(N);
@@ -52,23 +57,24 @@ for s = 1:noOfSeeds
                     beta = fittingFunction(yTr, tXTr, alpha, lambdas(i));
             end
 
-
-
             % training and test cost
-            errorTr(s, k, i) = errorFunction(yTr, tXTr*beta);
+            errorsTr(s, k, i) = errorFunction(yTr, tXTr*beta);
 
             % testing MSE using least squares
-            errorTe(s, k, i) = errorFunction(yTe, tXTe*beta);
+            errorsTe(s, k, i) = errorFunction(yTe, tXTe*beta);
 
         end
     end
 end
 
-errorTr = mean(errorTr, 2);
-errorTe = mean(errorTe, 2);
+% averages over the k folds
+errorsTr = mean(errorsTr, 2);
+errorsTe = mean(errorsTe, 2);
 
-errorTr = permute(errorTr, [1 3 2]);
-errorTe = permute(errorTe, [1 3 2]);
+% each line the output corresponds to a seed, and each column to a
+% parameter (e.g. lambda) value
+errorsTr = permute(errorsTr, [1 3 2]);
+errorsTe = permute(errorsTe, [1 3 2]);
 
 end
 

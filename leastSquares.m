@@ -1,5 +1,5 @@
 function [ beta ] = leastSquares( y, Tx )
-% Compute beta using least squares
+% direct LS computation method, using the fomula from the lectures
 
 beta = (Tx'*Tx)\(Tx'*y);
 
