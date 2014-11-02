@@ -275,50 +275,50 @@ for i = 1:noOfLambdas
     
 end
 
-% % takin all variables + sqrts of 11th and 24th
-txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
-@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error using sqrts of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
-
-%taking some degrees (2nd)
-txExt = [tX  X_train(:, 11).^2 X_train(:, 24).^2];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
-@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error using squares of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
+% % % takin all variables + sqrts of 11th and 24th
+% txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5];
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+% @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error using sqrts of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
+% 
+% %taking some degrees (2nd)
+% txExt = [tX  X_train(:, 11).^2 X_train(:, 24).^2];
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+% @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error using squares of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
 
 % %taking sqrts + some degrees
-txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5 X_train(:, 11).^2 X_train(:, 24).^2];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+txExt1 = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5 X_train(:, 11).^2 X_train(:, 24).^2];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt1,...
 @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
 meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using sqrts of 11th and 24th variables + squares, gives test RMSE: ' num2str(meanErrTe)]);
 
-% %taking everything except categorical variables
-txExt = tX(:, setdiff(1:(D+1), catVars));
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
-@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error when removing all categorical variables, gives test RMSE: ' num2str(meanErrTe)]);
+% % %taking everything except categorical variables
+% txExt = tX(:, setdiff(1:(D+1), catVars));
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+% @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error when removing all categorical variables, gives test RMSE: ' num2str(meanErrTe)]);
 
 %taking sqrts + 2nd and 3rd degrees
-txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5...
+txExt2 = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5...
     X_train(:, 11).^2 X_train(:, 24).^2 X_train(:, 11).^3 X_train(:, 24).^3];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+[rmseTr, rmseTe] = genericKCV( y_train, txExt2,...
 @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
 meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using sqrts of 11th and 24th variables + squares + 3rd degree, gives test RMSE: ' num2str(meanErrTe)]);
 
-txExt = [tX(:, setdiff(1:(D+1), catVars)) dummyCategoricalVariables];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
-@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error using dummy variables, gives test RMSE: ' num2str(meanErrTe)]);
+% txExt = [tX(:, setdiff(1:(D+1), catVars)) dummyCategoricalVariables];
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+% @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error using dummy variables, gives test RMSE: ' num2str(meanErrTe)]);

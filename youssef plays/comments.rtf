@@ -55,7 +55,7 @@ Also tried adding SQRT of the 18th and 34th variable (after making them positive
 \
 Sunday Nov 2nd:\
 \
-We decided that we\'92re going to ignore all categorical variables for regression, and also all the un-correlated variables, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before.\
+We decided that we\'92re going to ignore all categorical variables for regression, and also all the un-correlated variables, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam\'92s Razor.\
 \
 We noticed that we need to change the label of the -1 class of the y_train to 0, to be consistent with the book and to avoid make computations easier later (the probabilities from logistic regression map directly to the classes).\
 \
@@ -63,4 +63,11 @@ We tied to use simple logistic regression using all the variable, the estimated 
 \
 We then found that (since pearson correlation predicted better correlation of sqrts than squares but then squares were actually better able to decrease testError), it might be a good idea to include 3rd degree transforms of the 11th and 24th variables, so we added them and the testError increased to 0.26656. Thus taking higher orders doesn\'92t seem to help.\
 \
-We then tried to include a dummy variable transform, but that increased the testError significantly to 0.32625, therefore we\'92re not going to use them.}
+We then tried to include a dummy variable transform, but that increased the testError significantly to 0.32625, therefore we\'92re not going to use them.\
+\
+RidgeRegression: bestParameter =\
+ 39.0694\
+achievedErrorTe =\
+    0.3073\
+\
+}
