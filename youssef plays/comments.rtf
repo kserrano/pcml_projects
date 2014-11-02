@@ -6,12 +6,12 @@
 
 \f0\fs24 \cf0 Most variables seem normally distributed with varyious means, but the vars 43-48 seem categorical (42 not really normal, looks like the distributon of y actually, 2 gaussians with different means)\
 \
-Note that all the gradient descent methods used the eps threshold (machine dependant) in Matlab in the gradient descent function, to allow for a maximum number of iterations. This might make the gradient descent process slow though, so feel free to set another number if needed. We changed it later to 1/10000, so the numbers for the test Errors might be different depending on this parameter when you run the code (the global trends are the same though), since the number of iterations will be different.\
+Note that all the gradient descent methods used the eps threshold (machine dependant) in Matlab in the gradient descent function, to allow for a maximum number of iterations. This might make the gradient descent process slow though, so feel free to set another number if needed. We changed it later to 1/1000, so the numbers for the test Errors might be different depending on this parameter when you run the code (the global trends are the same though), since the number of iterations will be different.\
 \
 Kstest for normality only confirms that first 33 input variables are indeed random. something fishy about the variables 34-42 that SEEM normal (through histogram distribution)  but are not.\
 \
 tX has rank 49 for regression, so no redundancy in variables there\
-tX for classification has rank 36, so 48-35 = 13 of the original data dimensions are transforms or redundant wrt to others -> use PENALIZED logistic regressions and NOT normal logistic regression\
+tX for regression has rank 36, so 48-35 = 13 of the original data dimensions are transforms or redundant wrt to others -> use PENALIZED logistic regressions and NOT normal logistic regression\
 UPDATE: I was wrong, for classification there are 35 variables, + the one vector it SHOULD give rank 36 so the tX is NOT ill conditioned\
 \
 normalizing the variables 1-33 for regression, plus y, others are categorical\
@@ -89,4 +89,8 @@ bestParameter =\
     3.1623\
 \
 achievedErrorTe =\
-    0.2812}
+    0.2515\
+\
+\
+\
+}

@@ -1,0 +1,4 @@
+method;rmse
+leastSquaresGD;0.685273206
+leastSquares;0.331734592
+ridgeRegression;0.3073
