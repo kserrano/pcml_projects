@@ -12,9 +12,9 @@ plot(parameterValues, errorTe,'r-','color',[1 0.7 0.7]);
 hold on
 plot(parameterValues, errorTr,'b-','color',[0.7 0.7 1]);
 plot(parameterValues, avgErrorTe ,'r-','linewidth', 3); hold on
-plot(parameterValues, avgErrorTr,'b-','linewidth', 3); xlabel(parameterName); ylabel(errorName)
+plot(parameterValues, avgErrorTr,'b-','linewidth', 3); xlabel(parameterName);
+ylabel(errorName)
 title(givenTitle);
-ylabel('error');
 
 % computes the best parameter (usually a penalizazion term lambda) that
 % achieves the best test Error, returns both
