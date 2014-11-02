@@ -53,23 +53,26 @@ In this report, we discuss our implementation and findings for the project-I. \t
 \end{itemize}
 These functions are different machine learning methods.
 
-\textcolor{red}{Formula?}
+\textcolor{red}{Formula? Not even sure this section is useful}
 
 \section{Data observation}
 We have two data set. One for regression and one for classification. \begin{description}
-\item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of example is $N = 1400$ and each input $\mathbb{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical.
+\item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of example is $N = 1400$ and each input $\mathbf{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical.
 \item[Classification]
 
 \end{description}
 
 
 \section{Data visualization and cleaning}
-Most variables seem normally distributed with various means, but the variables 43-48 seem categorical (42 not really normal, looks like the distribution of $y$ actually, 2 Gaussian with different means)
-Kstest for normality only confirms that first 33 input variables are indeed random. something fishy about the variables 34-42 that SEEM normal (through histogram distribution)  but are not.\\
+\textcolor{red}{Histogram, correlation, applied methods}
 
-The matrix $\tilde{X}$ has rank 36 for regression. That means 13 variables are not correlated to anything (given a threshold of 10 percent of the maximum correlation). Then $\tilde{X}$ is not ill conditioned.
+
+\section{Best method : Ridge Regression}
+\textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}
+\section{Feature transformations}
+\textcolor{red}{Different transformation (myPoly, sqrt, etc)}
 \section{Summary}
-In this report, we analyzed a regression dataset and found that ridge regression is a reasonable fit. We estimate that the average test error is 1.213 ($\pm$ 0.02). We tried some feature transformation and found that there is a small improvement giving us a test error of around 1.198 ($\pm$ 0.015). This improvement, however, is not significant.
+\textcolor{red}{summarize in a few lines and write down all the final results}
 
 
 \subsubsection*{Acknowledgments}
