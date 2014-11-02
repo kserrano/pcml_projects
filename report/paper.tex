@@ -66,14 +66,24 @@ We have two data set. One for regression and one for classification. \begin{desc
 \section{Data visualization and cleaning}
 \textcolor{red}{Histogram, correlation, applied methods}\\
 Most variables normally distributed with various means. The first 34 input variables are Gaussian and the last 14 are categorical. Given that, we normalized and centred the first 34 variables and let the others untouched. Plotting the histogram showed us that the data are compact and there is no outlier.\textcolor{red}{show figure hist? Or boxplot like in template}\\
+For regression, $\mathbf{\tilde{X}}$ has rank 49, so no redundancy in variables. For classification, the rank of $\mathbf{\tilde{X}}$ is 35 plus the one vector. this tells us that $\mathbf{\tilde{X}}$ is not ill-conditioned.\\
+We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables. We used the Pearson correlation.\\
+
 WHY WE ARE USING PEARSON:
 To help us with the task of finding which transforms could be useful in better predicting the output from the given predictors, we decided to use the help of the pearson linear correlarion coefficient. This coefficient basically gives a number indicating the strength (in its absolute value) of a linear model fit between the input and the data. Obviously, we could visually inspect multiple scatter plots between each variable and the output, and also with the other variables, but this can (for obvious reasons) be somewhat of an overkill and could lead to subjective mistakes. The pearson coefficient allows us to selectively choose wich variables (and which possible transforms accordingly) could be used to fit a good model, in a very fast manner (simply adding columns to tX and checking their corrrelation coefficients). Using this strategy, we could rapidly pinpoint which transforms were probably most useful. The spearman coefficient also performs a similar computation, but tests not only the linear relationship between variables, including any exponential relationship or such. Therefore for some transformations, even though a linearly-fit model would not find them useful, the spearman coefficient would rank them as correlated ( to the output and other variables) as the variable they are coming from.\\
 
-We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables.
+
 \section{Least Squares}
 The mean gives a $RMSE$ of 0.99964, over normalized $\mathbf{y}$.\\
 
 Applying the least squares method on the data without cleaning yields a $RMSE$ of $0.48244$. Given that, we see that the $RMSE$ is cut by half so the input data are meaningful.
+\\
+
+We got the RMSE down to train error 0.3605 (with estimated test error 0.3805) using direct least Squares, simply by adding the squares of the 18th and 34th variables. When we added the squares of all the variables, we only got a train error of 0.3405 but this is clearly overfit because the corresponding test error estimate is 0.3765.\\
+
+We tested taking the squares of the 18th and the 34th variable individually and a curious thing happened: when we removed the 18th variable (squared) the test error increased to to 0.3881, but when we removed the 34th variable (squared) the test error increased much more significantly to 0.4987.
+
+\textcolor{red}{Move to transformation ?}By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the mypoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.48244
 \section{Ridge Regression}
 \textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}\\
 
@@ -88,7 +98,13 @@ We then found that, since Pearson correlation predicted better correlation of sq
 \textcolor{red}{Different transformation (myPoly, sqrt, etc)}
 \section{Summary}
 \textcolor{red}{summarize in a few lines and write down all the final results}
+For the regression, we saw that the best method was Ridge Regression. The best parameter was $\lambda =  39.0694$\textcolor{red}{?} and we achieved a test error of 0.3073.\\
 
+For the classification, the best method was penalized logistic regression. We obtained different results depending the type of error we computed. \begin{description}
+\item[rmse] Best parameter is 0.0621 and we achieved a test error of 0.2663.
+\item[01 loss]Best parameter is 0.4642 and we achieved a test error of 0.0962.
+\item[log loss] Best parameter is 3.1623 and we achieved a test error of 0.2812.
+\end{description}
 
 \subsubsection*{Acknowledgments}
 
