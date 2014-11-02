@@ -1,6 +1,8 @@
 % Run this to make sure your implementation is correct
 % An example of writing csv file is given in the end of this file
 clear all;
+close all
+clc
 
 % generating dummy dataset. regression
 beta = [1,2,3,4,5]';

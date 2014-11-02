@@ -4,8 +4,8 @@ clc
 clear all
 close all
 
-%load('MexicoCity_regression.mat')
-load('MexicoCity_classification.mat')
+load('MexicoCity_regression.mat')
+%load('MexicoCity_classification.mat')
 
 N = length(y_train); % data size
 D = size(X_train, 2); % dimensionality
@@ -59,9 +59,9 @@ stdX = std(X_train);
 X_train(:, normInputVars) = X_train(:, normInputVars)./repmat(stdX(:, normInputVars), N, 1);
 
 % normalizing the output variable, comment out for classification
-%y_train = (y_train-mean(y_train))/std(y_train); % for regression
+y_train = (y_train-mean(y_train))/std(y_train); % for regression
 %y_train = -y_train;
-y_train(y_train == -1) = 0; % for classification 
+%y_train(y_train == -1) = 0; % for classification 
 
 % Form (y,tX) to get regression data in matrix form
 tX = [ones(N,1) X_train(:, :)];
