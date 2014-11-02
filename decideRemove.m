@@ -4,7 +4,7 @@ function [rA, idx] = decideRemove( A )
 % the ouput is zero and that all the row of v in A is 0 (except v corr v)
 % idx is the vector of deleted indx
 outputCulumn = size(A,2);
-maxCorr = max(A(:,outputCulumn));
+maxCorr = max(abs(A(:,outputCulumn)));
 threshold = 0.10*maxCorr;
 rA = A;
 idx =[];

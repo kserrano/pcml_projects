@@ -49,4 +49,16 @@ I guess even though they are somewhat correlated with the output, these dummy va
 \
 Removing kevin\'92s variables to ignore actually increased the test Error to 0.33209, something\'92s wrong with the ignoring strategy then\
 \
-Also tried adding SQRT of the 18th and 34th variable (after making them positive to avoid complex numbers). With the sqrt of the 18th, testErr went up to 0.32137 and with that of the 34th it went up to 0.39349 ! not going to use sqrt}
+Also tried adding SQRT of the 18th and 34th variable (after making them positive to avoid complex numbers). With the sqrt of the 18th, testErr went up to 0.32137 and with that of the 34th it went up to 0.39349 ! not going to use sqrt\
+\
+Sunday Nov 2nd:\
+\
+We decided that we\'92re going to ignore all categorical variables for regression, and also all the un-correlated variables, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before.\
+\
+We noticed that we need to change the label of the -1 class of the y_train to 0, to be consistent with the book and to avoid make computations easier later (the probabilities from logistic regression map directly to the classes).\
+\
+We tied to use simple logistic regression using all the variable, the estimated rmse test error is 0.27099. Also we tried using sqrt on the 11th and 24th variables and it actually improves our test error (0.26779). We can also use squares of the variables instead of the sqrts (after chat there is pearson correlation is as significant as the original feature) and applying this alone the test error decreased to 0.26715. Adding both transformations got us a decrease to a testError of 0.26474. We also tried to remove all categorical variables as we did in regression, but the testError increased to 0.3396, so their information was needed and cannot be ignored.\
+\
+We then found that (since pearson correlation predicted better correlation of sqrts than squares but then squares were actually better able to decrease testError), it might be a good idea to include 3rd degree transforms of the 11th and 24th variables, so we added them and the testError increased to 0.26656. Thus taking higher orders doesn\'92t seem to help.\
+\
+We then tried to include a dummy variable transform, but that increased the testError significantly to 0.32625, therefore we\'92re not going to use them.}

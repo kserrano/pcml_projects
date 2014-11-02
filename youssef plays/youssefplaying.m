@@ -4,8 +4,8 @@ clc
 clear all
 close all
 
-load('MexicoCity_regression.mat')
-%load('MexicoCity_classification.mat')
+%load('MexicoCity_regression.mat')
+load('MexicoCity_classification.mat')
 
 N = length(y_train); % data size
 D = size(X_train, 2); % dimensionality
@@ -59,7 +59,9 @@ stdX = std(X_train);
 X_train(:, normInputVars) = X_train(:, normInputVars)./repmat(stdX(:, normInputVars), N, 1);
 
 % normalizing the output variable, comment out for classification
-y_train = (y_train-mean(y_train))/std(y_train);
+%y_train = (y_train-mean(y_train))/std(y_train); % for regression
+%y_train = -y_train;
+y_train(y_train == -1) = 0; % for classification 
 
 % Form (y,tX) to get regression data in matrix form
 tX = [ones(N,1) X_train(:, :)];
@@ -76,10 +78,16 @@ dummyCategoricalVariables = dummyvar(X_train(:, catVars)+1);
 
 % use the folowing line for testing dummy variables's correlation with the
 % output, comment out the next assignment to txSpecial
-txSpecial = dummyCategoricalVariables;
+%txSpecial = dummyCategoricalVariables;
 
 %txSpecial = [myPoly(X_train(:, 18),5) myPoly(X_train(:, 34),10) ];
-statistics = [y_train txSpecial];
+%statistics = [y_train txSpecial];
+
+% for testing all polynomials of the interesting 11th and 24th
+% classification variables
+%statistics = [y_train  myPoly(X_train(:, 11), 5) myPoly(X_train(:, 24), 5)];
+statistics = [y_train  (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5];
+
 % use this line if u want to plot the correlations for all the data instead
 %statistics = [y_train X_train];
 
@@ -160,12 +168,12 @@ meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using transforms on 18th and 34th, gives test RMSE: ' num2str(meanErrTe)])
 
-txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6) (X_train(:, 34)-min(X_train(:, 34))).^0.5];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
-@leastSquares, @rmse, [], 4, [], 100);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error using transforms on 18th and 34th + sqrt of 34th, gives test RMSE: ' num2str(meanErrTe)])
+% txExt =[tX(:, setdiff(1:49, 35)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6) (X_train(:, 34)-min(X_train(:, 34))).^0.5];
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+% @leastSquares, @rmse, [], 4, [], 100);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error using transforms on 18th and 34th + sqrt of 34th, gives test RMSE: ' num2str(meanErrTe)])
 
 %% adding good dummy variables
 clc
@@ -207,20 +215,37 @@ meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using transforms on 18th and 34th with only correlated categorical ones (taking good classes only), gives test RMSE: ' num2str(meanErrTe)]);
 
-%% removing kevin's bad (spurious, to ignore) input variables
+%% removing kevin's bad (spurious, to ignore) input variables (regression)
 
-regressionSpuriousVariables = [5    15    17    36    37    39    41    42    43    44    46    47    49];
-txExt3 = [txExt(:, setdiff(1:size(txExt, 2), regressionSpuriousVariables)) ];
+regressionSpuriousVariables = [27    30    31    33    39    44    47];
+
+txExt3 = [tX(:, setdiff(1:size(tX, 2), regressionSpuriousVariables+1))];
 [rmseTr, rmseTe] = genericKCV( y_train, txExt3,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error when removing spurious variables, gives test RMSE: ' num2str(meanErrTe)]);
+
+txExt4 = [tX(:, setdiff(1:size(tX, 2), [regressionSpuriousVariables 34]+1)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6)];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt4,...
 @leastSquares, @rmse, [], 4, [], 100);
 meanErrTe = mean(rmseTe);
 disp(' ')
 disp(['estimated test error using transforms on 18th and 34th while also removing spurious ones, gives test RMSE: ' num2str(meanErrTe)]);
 
+txExt4 = [tX(:, setdiff(1:size(tX, 2), union([regressionSpuriousVariables 34], catVars)+1)) X_train(:, 18).^3 myPoly(X_train(:, 34), 6)];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt4,...
+@leastSquares, @rmse, [], 4, [], 100);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using transforms on 18th and 34th while also removing spurious ones & categoricals, gives test RMSE: ' num2str(meanErrTe)]);
+
 %% preliminary fitting (classification)
 
 % Form (y,tX) to get regression data in matrix form
 tX = [ones(N,1) X_train(:, :)];
+
+noOfSeeds = 10;
 
 ranktX = rank(tX);
 disp(' ');
@@ -230,10 +255,11 @@ disp(['rank of data columns is :' num2str(ranktX)]);
 alpha = 0.1;
 betaLR = logisticRegression(y_train,tX,alpha);
 temp = tX*betaLR;
-y_hatLS = temp > 0;
-LSrmse = rmse(y_train, y_hatLS);
+[LRrmseTr, LRrmseTe] = genericKCV( y_train, tX,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+LRrmseTe = mean(LRrmseTe);
 disp(' ');
-disp(['simple Logistic regression gives Training rmse = ' num2str(LSrmse)]);
+disp(['simple Logistic regression gives test RMSE rmse = ' num2str(LRrmseTe)]);
 
 noOfLambdas = 10;
 RRrmses = zeros(1, noOfLambdas);
@@ -244,8 +270,55 @@ for i = 1:noOfLambdas
 
     betaPLR = penLogisticRegression(y_train, tX, alpha, lambdas(i));
     temp = tX*betaPLR;
-    y_hatPLR = temp > 0;
-    RRrmses(i) = rmse(y_train, y_hatPLR);
+    RRrmses(i) = rmseClassification(y_train, temp);
     disp(['for lambda = ' num2str(lambdas(i)) ' penalized logistic regression fits with training RMSE ' num2str(RRrmses(i))])
     
 end
+
+% % takin all variables + sqrts of 11th and 24th
+txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using sqrts of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
+
+%taking some degrees (2nd)
+txExt = [tX  X_train(:, 11).^2 X_train(:, 24).^2];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using squares of 11th and 24th variables, gives test RMSE: ' num2str(meanErrTe)]);
+
+% %taking sqrts + some degrees
+txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5 X_train(:, 11).^2 X_train(:, 24).^2];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using sqrts of 11th and 24th variables + squares, gives test RMSE: ' num2str(meanErrTe)]);
+
+% %taking everything except categorical variables
+txExt = tX(:, setdiff(1:(D+1), catVars));
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error when removing all categorical variables, gives test RMSE: ' num2str(meanErrTe)]);
+
+%taking sqrts + 2nd and 3rd degrees
+txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5...
+    X_train(:, 11).^2 X_train(:, 24).^2 X_train(:, 11).^3 X_train(:, 24).^3];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using sqrts of 11th and 24th variables + squares + 3rd degree, gives test RMSE: ' num2str(meanErrTe)]);
+
+txExt = [tX(:, setdiff(1:(D+1), catVars)) dummyCategoricalVariables];
+[rmseTr, rmseTe] = genericKCV( y_train, txExt,...
+@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+meanErrTe = mean(rmseTe);
+disp(' ')
+disp(['estimated test error using dummy variables, gives test RMSE: ' num2str(meanErrTe)]);
