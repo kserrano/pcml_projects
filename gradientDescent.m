@@ -8,7 +8,7 @@ beta = betaStart;
 
 minIters = maxIters/5;
 
-epsilon = 10^-2;
+epsilon = 1/1000;
 
 for k = 1:maxIters
 
