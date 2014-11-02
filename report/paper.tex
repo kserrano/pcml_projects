@@ -57,15 +57,15 @@ These functions are different machine learning methods.
 
 \section{Data observation}
 We have two data set. One for regression and one for classification. \begin{description}
-\item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of example is $N = 1400$ and each input $\mathbf{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical.
-\item[Classification]
+\item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1400$ and each input $\mathbf{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical, included $5$ that are binaries.
+\item[Classification] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1500$ and each input $\mathbf{x_n}$ has dimensionality $D = 35$. \textcolor{red}{check hist}
 
 \end{description}
 
 
 \section{Data visualization and cleaning}
-\textcolor{red}{Histogram, correlation, applied methods}
-
+\textcolor{red}{Histogram, correlation, applied methods}\\
+Most variables normally distributed with various means. The first 34 input variables are Gaussian and the last 14 are categorical. Given that, we normalized and centred the first 34 variables and let the others untouched. Plotting the histogram showed us that the data are compact and there is no outlier.
 
 \section{Best method : Ridge Regression}
 \textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}
