@@ -53,14 +53,31 @@ In this report, we discuss our implementation and findings for the project-I. \t
 \end{itemize}
 These functions are different machine learning methods.
 
-\textcolor{red}{Formula?}
+\textcolor{red}{Formula? Not even sure this section is useful}
 
 \section{Data observation}
+We have two data set. One for regression and one for classification. \begin{description}
+\item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1400$ and each input $\mathbf{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical, included $5$ that are binaries.
+\item[Classification] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1500$ and each input $\mathbf{x_n}$ has dimensionality $D = 35$. \textcolor{red}{check hist}
+
+\end{description}
 
 
+\section{Data visualization and cleaning}
+\textcolor{red}{Histogram, correlation, applied methods}\\
+Most variables normally distributed with various means. The first 34 input variables are Gaussian and the last 14 are categorical. Given that, we normalized and centred the first 34 variables and let the others untouched. Plotting the histogram showed us that the data are compact and there is no outlier.\textcolor{red}{show figure hist? Or boxplot like in template}\\
+WHY WE ARE USING PEARSON:
+To help us with the task of finding which transforms could be useful in better predicting the output from the given predictors, we decided to use the help of the pearson linear correlarion coefficient. This coefficient basically gives a number indicating the strength (in its absolute value) of a linear model fit between the input and the data. Obviously, we could visually inspect multiple scatter plots between each variable and the output, and also with the other variables, but this can (for obvious reasons) be somewhat of an overkill and could lead to subjective mistakes. The pearson coefficient allows us to selectively choose wich variables (and which possible transforms accordingly) could be used to fit a good model, in a very fast manner (simply adding columns to tX and checking their corrrelation coefficients). Using this strategy, we could rapidly pinpoint which transforms were probably most useful. The spearman coefficient also performs a similar computation, but tests not only the linear relationship between variables, including any exponential relationship or such. Therefore for some transformations, even though a linearly-fit model would not find them useful, the spearman coefficient would rank them as correlated ( to the output and other variables) as the variable they are coming from.\\
 
+We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables.\textcolor{red}{More details to add here :youssef text}
+\section{Least Squares}
+Applying the least squares method on the data without cleaning yields a $RMSE$ of $0.48244$.
+\section{Best method : Ridge Regression}
+\textcolor{red}{explain what is the best method and why for our dataset, add some figures and results}
+\section{Feature transformations}
+\textcolor{red}{Different transformation (myPoly, sqrt, etc)}
 \section{Summary}
-In this report, we analyzed a regression dataset and found that ridge regression is a reasonable fit. We estimate that the average test error is 1.213 ($\pm$ 0.02). We tried some feature transformation and found that there is a small improvement giving us a test error of around 1.198 ($\pm$ 0.015). This improvement, however, is not significant.
+\textcolor{red}{summarize in a few lines and write down all the final results}
 
 
 \subsubsection*{Acknowledgments}
