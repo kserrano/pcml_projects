@@ -53,17 +53,16 @@ In this report, we discuss our implementation and findings for the project-I. We
 \end{itemize}
 These functions are different machine learning methods.
 
-\textcolor{red}{Formula? Not even sure this section is useful}
 
 \section{Data observation}
 \label{sec:datadescr}
 We have two data set. One for regression and one for classification. \begin{description}
 \item[Regression] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1400$ and each input $\mathbf{x_n}$ has dimensionality $D = 48$. The first $34$ are real valued and the last $14$ are categorical, included $5$ that are binaries.
-\item[Classification] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1500$ and each input $\mathbf{x_n}$ has dimensionality $D = 35$. \textcolor{red}{check hist}
+\item[Classification] Consists of output variables $\mathbf{y}$ and input variables $\mathbf{X}$. The number of examples is $N = 1500$ and each input $\mathbf{x_n}$ has dimensionality $D = 35$. 
 
 \end{description}
 
-\textcolor{red}{need to move that somewhere}Note that all the gradient descent methods used the eps threshold (machine dependant) in Matlab in the gradient descent function, to allow for a maximum number of iterations. This might make the gradient descent process slow though, so feel free to set another number if needed. We changed it later to 1/1000, so the numbers for the test Errors might be different depending on this parameter when you run the code (the global trends are the same though), since the number of iterations will be different.
+Note that all the gradient descent methods used the eps threshold (machine dependant) in Matlab in the gradient descent function, to allow for a maximum number of iterations. This might make the gradient descent process slow though, so feel free to set another number if needed. We changed it later to 1/1000, so the numbers for the test Errors might be different depending on this parameter when you run the code (the global trends are the same though), since the number of iterations will be different.
 
 \section{Regression}
 \subsection{Data visualization and cleaning}
@@ -96,34 +95,51 @@ Applying the least squares method on the data without cleaning yields a training
 
 We got the RMSE down to train error 0.3605 (with estimated test error 0.3805) using direct least Squares, simply by adding the squares of the 18th and 34th variables. When we added the squares of all the variables, we only got a train error of 0.3405 but this is clearly overfit because the corresponding test error estimate is 0.3765.\\
 
-We tested taking the squares of the 18th and the 34th variable individually and a curious thing happened: when we removed the 18th variable (squared) the test error increased to to 0.3881, but when we removed the 34th variable (squared) the test error increased much more significantly to 0.4987.
+We tested taking the squares of the 18th and the 34th variable individually and a curious thing happened: when we removed the 18th variable (squared) the test error increased to to 0.3881, but when we removed the 34th variable (squared) the test error increased much more significantly to 0.4987.\\
 
-\subsection{Ridge Regression}
 \label{sec:regridgreg}
 By visually inspecting the Pearson correlation graphs, a good strategy to spot well correlated input variables was to take the intersection of the two methods (we’re only considering ). To do that, we tried multiplying the two coefficients (for each variable) and taking the mean. Both strategies clearly showed the 18th and 34th variables are best correlated. We can limit our variable transform to these two (we only have 1400 data points, so with a dimension 48 we’re already lacking data, by introducing spurious transforms we would be adding fuel to the fire and causing overfitting.)\\
-We have also done a cross validation using seeds. The result is shown in Figure \ref{fig:ridreggcv}.
+
+\subsection{Ridge Regression}
+After applying least squares, we have also done a cross validation using seeds. The result is shown in Figure \ref{fig:ridreggcv}.
 \begin{figure}
 \centering
 \includegraphics[width=1\textwidth]{images/ridgeRegCV.eps}
 \caption{Cross validation : Ridge regression with different lambda values }
 \label{fig:ridreggcv}
 \end{figure}
+We realized that the RMSE decreased for a parameter $\lambda = 39.0694$ to a RMSE of $0.3073$. We can see that on the Figure \ref{fig:ridreggcv}.
 
-\subsection{Logistic Regression}
-We tried to use simple logistic regression using all the variable, the estimated RMSE test error was 0.27099. Also we tried using sqrt on the 11th and 24th variables which actually improves our test error to 0.26779. We can also use squares of the variables instead of the square root and applying this alone the test error decreased to 0.26715. Adding both transformations got us a decrease to a test error of 0.26474. We also tried to remove all categorical variables as we did in regression, but the test error increased to 0.3396, so their information was needed and cannot be ignored.
 \subsection{Feature transformations}
+We tried dummy variables for all regression categorical ones. We could only find a significant linear correlation (using Spearman) for the 2nd class of the variable 44, 2nd and 4th class of the 47th.\\
+
+We tried keeping the polynomial transforms and removed all categorical variables. The test error went down to 0.33043.\\
+
+Adding back the mentioned dummy variables 44 and 47 actually increased the test error to 0.33105. This lead the matrix $\mathbf{\tilde{X}}$ to become ill conditioned.\\
+
+We also tried adding square root of the 18th and 34th variable, that means $\sqrt{|X_{n18}|}$ and $\sqrt{|X_{n34}|}$ of $\mathbf{X}$. With the 18th the test error went up to 0.32137 and with the 34th it went up to 0.39349. So this doesn't help and we decided not tu use square root transformation.\\
+
+We decided to ignore all the un-correlated variables for regression, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
+
 By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the mypoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.3805.\\
 
-We then found that, since Pearson correlation predicted better correlation of square roots than squares but squares were actually better able to decrease test error, it might be a good idea to include 3rd degree transforms of the 11th and 24th variables for logistic regression. After having added them, the test error increased to 0.26656. Thus taking higher orders doesn’t seem to help. We then tried to include a dummy variable transform, but that increased the test error significantly to 0.32625, therefore we’re not going to use them.
+
 
 \section{Classification}
 
 \subsection{visualization and cleaning}
 
-For classification, the rank of $\mathbf{\tilde{X}}$ is 35 plus the one vector. Given the data description from section \ref{sec:datadescr}, this tells us that $\mathbf{\tilde{X}}$ is not ill-conditioned.\\
+For classification, the rank of $\mathbf{\tilde{X}}$ is 35 plus the one vector. Given the data description from section \ref{sec:datadescr}, this tells us that $\mathbf{\tilde{X}}$ is not ill-conditioned.\\ The range of $\mathbf{y}$ is between $-1$ and $1$. We also modified the values $-1$ from $\mathbf{y}$ to 0 to be consistent with the book.
 
-\subsection{Ridge Regression}
-For the classification, we repeated the procedure describe in section \ref{sec:regridgreg}. We found that the 11th and the 24th variables are best correlated with the output, therefore we used feature transforms on those. \textcolor{red}{what transformation? sqrt etc but only on these variables? }
+\subsection{Logistic Regression}
+For the classification, we repeated the procedure describe in section \ref{sec:regridgreg}. We found that the 11th and the 24th variables are best correlated with the output, therefore we used feature transforms on those as described in section \ref{sec:ftransclass}.
+
+
+\subsection{Feature transformations}
+\label{sec:ftransclass}
+We tried to use simple logistic regression using all the variable, the estimated RMSE test error was 0.27099. Also we tried using sqrt on the 11th and 24th variables which actually improves our test error to 0.26779. We can also use squares of the variables instead of the square root and applying this alone the test error decreased to 0.26715. Adding both transformations got us a decrease to a test error of 0.26474. We also tried to remove all categorical variables as we did in regression, but the test error increased to 0.3396, so their information was needed and cannot be ignored.\\
+
+We then found that, since Pearson correlation predicted better correlation of square roots than squares but squares were actually better able to decrease test error, it might be a good idea to include 3rd degree transforms of the 11th and 24th variables for logistic regression. After having added them, the test error increased to 0.26656. Thus taking higher orders doesn’t seem to help. We then tried to include a dummy variable transform, but that increased the test error significantly to 0.32625, therefore we’re not going to use them.
 
 \subsection{Penalized logistic regression}
 We could improve the test error by cross-validation. The Figure \ref{fig:crossval} shows the three different test error RMSE, 0-1 loss and logloss. We used different numbers of seed to have a better prediction for our test error.
@@ -135,18 +151,6 @@ We could improve the test error by cross-validation. The Figure \ref{fig:crossva
 \caption{Cross-validation : penalized logistic regression with different lambda values}
 \label{fig:crossval}
 \end{figure} 
-\subsection{Feature transformations}
-
-We tried dummy variables for all regression categorical ones. We could only find a significant linear correlation (using Spearman) for the 2nd class of the variable 44, 2nd and 4th class of the 47th.\\
-
-We tried keeping the polynomial transforms and removed all categorical variables. The test error went down to 0.33043.\\
-
-Adding back the mentioned dummy variables 44 and 47 actually increased the test error to 0.33105. This lead the matrix $\mathbf{\tilde{X}}$ to become ill conditioned.\\
-
-We also tried adding square root of the 18th and 34th variable, that means $\sqrt{|X_{n18}|}$ and $\sqrt{|X_{n34}|}$ of $\mathbf{X}$. With the 18th the test error went up to 0.32137 and with the 34th it went up to 0.39349. So this doesn't help and we decided not tu use square root transformation.\\
-
-We decided to ignore all the un-correlated variables for regression, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
-
 \section{Summary}
 As we have seen, the cross validation helps to have a better test error.\\
 
@@ -156,7 +160,7 @@ We obtained these RMSE for regression.
 \item[leastSquares] We achieved a RMSE of 0.3317
 \item[RidgeRegression] We achieved a RMSE of 0.3073
 \end{description}
-For the regression, we saw that the best method was Ridge Regression. The best parameter was $\lambda =  39.0694$\textcolor{red}{?} and we achieved a test error of 0.3073.
+For the regression, we saw that the best method was Ridge Regression. The best parameter was $\lambda =  39.0694$ and we achieved a test error of 0.3073.
 
 For the classification, the best method was penalized logistic regression. We obtained different results depending the type of error we computed. \begin{description}
 \item[RMSE] We achieved a test error of 0.2644.
@@ -168,7 +172,8 @@ With logistic regression we obtained different results depending the type of err
 \item[01 loss]We achieved a test error of 0.09486.
 \item[log loss] We achieved a test error of 0.2637.
 \end{description}
-We see that there is only a small improvement with the log loss error.
+We see that there is only a small improvement with the log loss error.\\
+The best error we achieved is through the logistic regression method and using the 0-1 loss error.
 
 \subsubsection*{Acknowledgments}
 
