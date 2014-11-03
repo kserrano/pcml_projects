@@ -265,15 +265,15 @@ noOfLambdas = 10;
 RRrmses = zeros(1, noOfLambdas);
 lambdas = logspace(-2, 2, noOfLambdas);
 
-disp(' ');
-for i = 1:noOfLambdas
-
-    betaPLR = penLogisticRegression(y_train, tX, alpha, lambdas(i));
-    temp = tX*betaPLR;
-    RRrmses(i) = rmseClassification(y_train, temp);
-    disp(['for lambda = ' num2str(lambdas(i)) ' penalized logistic regression fits with training RMSE ' num2str(RRrmses(i))])
-    
-end
+% disp(' ');
+% for i = 1:noOfLambdas
+% 
+%     betaPLR = penLogisticRegression(y_train, tX, alpha, lambdas(i));
+%     temp = tX*betaPLR;
+%     RRrmses(i) = rmseClassification(y_train, temp);
+%     disp(['for lambda = ' num2str(lambdas(i)) ' penalized logistic regression fits with training RMSE ' num2str(RRrmses(i))])
+%     
+% end
 
 % % % takin all variables + sqrts of 11th and 24th
 % txExt = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5];
@@ -308,13 +308,13 @@ disp(['estimated test error using sqrts of 11th and 24th variables + squares, gi
 % disp(['estimated test error when removing all categorical variables, gives test RMSE: ' num2str(meanErrTe)]);
 
 %taking sqrts + 2nd and 3rd degrees
-txExt2 = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5...
-    X_train(:, 11).^2 X_train(:, 24).^2 X_train(:, 11).^3 X_train(:, 24).^3];
-[rmseTr, rmseTe] = genericKCV( y_train, txExt2,...
-@logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
-meanErrTe = mean(rmseTe);
-disp(' ')
-disp(['estimated test error using sqrts of 11th and 24th variables + squares + 3rd degree, gives test RMSE: ' num2str(meanErrTe)]);
+% txExt2 = [tX (X_train(:, 11)-min(X_train(:, 11))).^0.5 (X_train(:, 24)-min(X_train(:, 24))).^0.5...
+%     X_train(:, 11).^2 X_train(:, 24).^2 X_train(:, 11).^3 X_train(:, 24).^3];
+% [rmseTr, rmseTe] = genericKCV( y_train, txExt2,...
+% @logisticRegression, @rmseClassification, [], 4, alpha, noOfSeeds);
+% meanErrTe = mean(rmseTe);
+% disp(' ')
+% disp(['estimated test error using sqrts of 11th and 24th variables + squares + 3rd degree, gives test RMSE: ' num2str(meanErrTe)]);
 
 % txExt = [tX(:, setdiff(1:(D+1), catVars)) dummyCategoricalVariables];
 % [rmseTr, rmseTe] = genericKCV( y_train, txExt,...
