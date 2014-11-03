@@ -98,6 +98,20 @@ We tested taking the squares of the 18th and the 34th variable individually and 
 \label{sec:regridgreg}
 By visually inspecting the Pearson correlation graphs, a good strategy to spot well correlated input variables was to take the intersection of the two methods (we’re only considering ). To do that, we tried multiplying the two coefficients (for each variable) and taking the mean. Both strategies clearly showed the 18th and 34th variables are best correlated. We can limit our variable transform to these two (we only have 1400 data points, so with a dimension 48 we’re already lacking data, by introducing spurious transforms we would be adding fuel to the fire and causing overfitting.)
 
+\subsection{Feature transformations}
+We tried dummy variables for all regression categorical ones. We could only find a significant linear correlation (using Spearman) for the 2nd class of the variable 44, 2nd and 4th class of the 47th.
+
+We tried keeping the polynomial transforms and removed all categorical variables. The test error went down to 0.33043.\\
+
+Adding back the mentioned dummy variables 44 and 47 actually increased the test error to 0.33105. Adding only the specifically mentioned (above) classes indicator dummy variables led the matrix $\mathbf{\tilde{X}}$ to become ill conditioned.
+
+By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the myPoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.3805.
+
+We also tried adding square root of the 18th and 34th variable, that means $\sqrt{|X_{n18}|}$ and $\sqrt{|X_{n34}|}$ of $\mathbf{X}$. With the 18th the test error went up to 0.32137 and with the 34th it went up to 0.39349. So this doesn't help and we decided not tu use square root transformation.
+
+We decided to ignore all the un-correlated variables for regression, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
+
+
 \subsection{Ridge Regression}
 After applying least squares, we have also done a cross validation using seeds. The result is shown in Figure \ref{fig:ridreggcv}.
 \begin{figure}
@@ -107,19 +121,6 @@ After applying least squares, we have also done a cross validation using seeds. 
 \label{fig:ridreggcv}
 \end{figure}
 We realized that the RMSE decreased for a parameter $\lambda = 39.0694$ to a RMSE of $0.3073$. We can see that on the Figure \ref{fig:ridreggcv}.
-
-\subsection{Feature transformations}
-We tried dummy variables for all regression categorical ones. We could only find a significant linear correlation (using Spearman) for the 2nd class of the variable 44, 2nd and 4th class of the 47th.
-
-We tried keeping the polynomial transforms and removed all categorical variables. The test error went down to 0.33043.\\
-
-Adding back the mentioned dummy variables 44 and 47 actually increased the test error to 0.33105. This leads the matrix $\mathbf{\tilde{X}}$ to become ill conditioned.
-
-We also tried adding square root of the 18th and 34th variable, that means $\sqrt{|X_{n18}|}$ and $\sqrt{|X_{n34}|}$ of $\mathbf{X}$. With the 18th the test error went up to 0.32137 and with the 34th it went up to 0.39349. So this doesn't help and we decided not tu use square root transformation.
-
-We decided to ignore all the un-correlated variables for regression, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
-
-By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the myPoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.3805.
 \section{Classification}
 \subsection{visualization and cleaning}
 
@@ -176,7 +177,11 @@ We would like to thanks the teaching team for their availability during the exer
 \subsubsection*{References}
 Kevin Murphy, Machine Learning : A Probabilistic Perspective {\em The MIT Press
 Cambridge, Massachusetts
-London, England,2012} 
-
-
+London, England,2012}\\
+Trevor Hastie,Robert Tibshirani,Jerome Friedman : The Elements of
+Statistical Learning. Data Mining,Inference,and Prediction. {\em Springer, 2008}\\
+Gareth James,
+Daniela Witten,
+Trevor Hastie,
+Robert Tibshirani:An Introduction to Statistical Learning.{\em Springer, 2013}
 \end{document}
