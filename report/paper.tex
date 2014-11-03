@@ -74,8 +74,8 @@ To help us with the task of finding which transforms could be useful in better p
 We checked the correlation between output and input variables. The correlation matrix helped us to discover which variables where correlated to no other variables nor the output. We could remove these variables. We used the Pearson correlation. The variables that are neither significantly correlated with the output, nor with the other input variables, were found and were later removed from our model for simplicity and to improve generalization performance
 \begin{figure}
 \centering
-\includegraphics[width=1\textwidth]{images/boxplot_xtrain_reg.eps}
-\caption{Boxplot of all input variables}
+\includegraphics[width=0.7\textwidth]{images/boxplot_xtrain_reg.eps}
+\caption{Boxplot of all input variables for regression (except categorical)}
 \label{fig:boxplot}
 \end{figure}
 
@@ -98,13 +98,13 @@ We got the RMSE down to train error 0.3605 (with estimated test error 0.3805) us
 We tested taking the squares of the 18th and the 34th variable individually and a curious thing happened: when we removed the 18th variable (squared) the test error increased to to 0.3881, but when we removed the 34th variable (squared) the test error increased much more significantly to 0.4987.\\
 
 \label{sec:regridgreg}
-By visually inspecting the Pearson correlation graphs, a good strategy to spot well correlated input variables was to take the intersection of the two methods (we’re only considering ). To do that, we tried multiplying the two coefficients (for each variable) and taking the mean. Both strategies clearly showed the 18th and 34th variables are best correlated. We can limit our variable transform to these two (we only have 1400 data points, so with a dimension 48 we’re already lacking data, by introducing spurious transforms we would be adding fuel to the fire and causing overfitting.)\\
+By visually inspecting the Pearson correlation graphs, a good strategy to spot well correlated input variables was to take the intersection of the two methods (we’re only considering ). To do that, we tried multiplying the two coefficients (for each variable) and taking the mean. Both strategies clearly showed the 18th and 34th variables are best correlated. We can limit our variable transform to these two (we only have 1400 data points, so with a dimension 48 we’re already lacking data, by introducing spurious transforms we would be adding fuel to the fire and causing overfitting.)
 
 \subsection{Ridge Regression}
 After applying least squares, we have also done a cross validation using seeds. The result is shown in Figure \ref{fig:ridreggcv}.
 \begin{figure}
 \centering
-\includegraphics[width=1\textwidth]{images/ridgeRegCV.eps}
+\includegraphics[width=0.5\textwidth]{images/ridgeRegCV.jpg}
 \caption{Cross validation : Ridge regression with different lambda values }
 \label{fig:ridreggcv}
 \end{figure}
@@ -121,33 +121,31 @@ We also tried adding square root of the 18th and 34th variable, that means $\sqr
 
 We decided to ignore all the un-correlated variables for regression, giving a test error of 0.33173 while including the significant transformations of the 18th and 34th variables discussed before. We decided to opt for a simpler model because of Occam’s Razor.
 
-By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the mypoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.3805.\\
-
-
-
+By isolating the 18th and 34th input variables, and producing polynomial transforms of them using the mypoly function, and then measuring their Pearson correlation coefficient with the output, we could see that the cube and the power 5 of the 18th variable, and powers up to 6 for the 34th variable are correlated with the output. When adding these feature transformations, we could lower the test error to 0.3307, which is quite lower now than the starting test error of 0.3805.
 \section{Classification}
-
 \subsection{visualization and cleaning}
 
-For classification, the rank of $\mathbf{\tilde{X}}$ is 35 plus the one vector. Given the data description from section \ref{sec:datadescr}, this tells us that $\mathbf{\tilde{X}}$ is not ill-conditioned.\\ The range of $\mathbf{y}$ is between $-1$ and $1$. We also modified the values $-1$ from $\mathbf{y}$ to 0 to be consistent with the book.
-
+For classification, the rank of $\mathbf{\tilde{X}}$ is 35 plus the one vector. Given the data description from section \ref{sec:datadescr}, this tells us that $\mathbf{\tilde{X}}$ is not ill-conditioned.\\ The range of $\mathbf{y}$ is between $-1$ and $1$. We also modified the values $-1$ from $\mathbf{y}$ to 0 to be consistent with the book. We show the boxplot for $\mathbf{X}$ in Figure \ref{fig:boxplotclass}.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/boxplot_class.eps}
+\caption{Boxplot for input variable $\mathbf{X}$ for classification}
+\label{fig:boxplotclass}
+\end{figure}
 \subsection{Logistic Regression}
 For the classification, we repeated the procedure describe in section \ref{sec:regridgreg}. We found that the 11th and the 24th variables are best correlated with the output, therefore we used feature transforms on those as described in section \ref{sec:ftransclass}.
-
-
 \subsection{Feature transformations}
 \label{sec:ftransclass}
 We tried to use simple logistic regression using all the variable, the estimated RMSE test error was 0.27099. Also we tried using sqrt on the 11th and 24th variables which actually improves our test error to 0.26779. We can also use squares of the variables instead of the square root and applying this alone the test error decreased to 0.26715. Adding both transformations got us a decrease to a test error of 0.26474. We also tried to remove all categorical variables as we did in regression, but the test error increased to 0.3396, so their information was needed and cannot be ignored.\\
 
 We then found that, since Pearson correlation predicted better correlation of square roots than squares but squares were actually better able to decrease test error, it might be a good idea to include 3rd degree transforms of the 11th and 24th variables for logistic regression. After having added them, the test error increased to 0.26656. Thus taking higher orders doesn’t seem to help. We then tried to include a dummy variable transform, but that increased the test error significantly to 0.32625, therefore we’re not going to use them.
-
 \subsection{Penalized logistic regression}
 We could improve the test error by cross-validation. The Figure \ref{fig:crossval} shows the three different test error RMSE, 0-1 loss and logloss. We used different numbers of seed to have a better prediction for our test error.
 \begin{figure}
 \centering
-\subfigure[0-1 loss]{\includegraphics[width=1\textwidth]{images/penLogRegCrossVall01Loss.eps}}
-\subfigure[rmse]{\includegraphics[width=1\textwidth]{images/penLogRegrmse.eps}}
-\subfigure[log loss]{\includegraphics[width=1\textwidth]{images/penLogRegLogloss.eps}}
+\subfigure[0-1 loss]{\includegraphics[width=0.6\textwidth]{images/penLogRegCrossVall01Loss.jpg}}
+\subfigure[rmse]{\includegraphics[width=0.6\textwidth]{images/penLogRegrmse.jpg}}
+\subfigure[log loss]{\includegraphics[width=0.6\textwidth]{images/penLogRegLogloss.jpg}}
 \caption{Cross-validation : penalized logistic regression with different lambda values}
 \label{fig:crossval}
 \end{figure} 
@@ -176,8 +174,9 @@ We see that there is only a small improvement with the log loss error.\\
 The best error we achieved is through the logistic regression method and using the 0-1 loss error.
 
 \subsubsection*{Acknowledgments}
-
+We would like to thanks the teaching team for their availability during the exercise session but also on the forum. We also want to thanks Youssef who organized the milestone of the project.
 
 \subsubsection*{References}
+
 
 \end{document}
