@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Five functions}{}% 1
+\BOOKMARK [1][-]{section.2}{Data observation}{}% 2
+\BOOKMARK [1][-]{section.3}{Regression}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Data visualization and cleaning}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Least Squares}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Feature transformations}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.4}{Ridge Regression}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Classification}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{visualization and cleaning}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.2}{Logistic Regression}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.3}{Feature transformations}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.4}{Penalized logistic regression}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Summary}{}% 13
