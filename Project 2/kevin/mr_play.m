@@ -1,7 +1,7 @@
 %% Load file
 close all; clear all;
 load('../songTrain.mat');
-ua = Ytrain; % users-artists
+ua = Ytrain; % users-artists 
 
 %% Normalize per user (rows)
 rowMax = max(ua,[],2);
