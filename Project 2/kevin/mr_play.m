@@ -1,30 +1,36 @@
 %% Load file
 close all; clear all;
 load('../songTrain.mat');
+%Ytrain(Ytrain>0) = 1;
 ua = Ytrain; % users-artists 
 
 %% Normalize per user (rows)
 rowMax = max(ua,[],2);
-rowMax(rowMax==0) = 1;
+%rowMax(rowMax==0) = 1;
 %%
 rowrep = repmat(rowMax,1,size(ua,2));
 ua = ua./rowrep;
+%%
+
+RRt = ua*ua';
+RtR = ua'*ua;
+
 %% Compute P and Q
-[m,n] = size(ua);
+[m,n] = size(RRt);
 for i = 1:m
-    row = ua(i,:);
-   diagP(i) = sum(row);
+   
+   diagP(i) = RRt(i,i);
 end 
 P = diag(diagP);
-for(i = 1:n)
-    col = ua(:,i);
-    diagQ(i) = sum(col);
-end
-Q = diag(diagQ);
+% for(i = 1:n)
+%     col = ua(:,i);
+%     diagQ(i) = sum(col);
+% end
+% Q = diag(diagQ);
 
 %% check if diagQ and diagP has no zero
 any(0==diagP)
-any(0==diagQ)
+%any(0==diagQ)
 %% Compute inverse of sqrt P and Q
 % Because P,Q are diagonal with non-zero element in the diagonal, the inverse is simply the inverse of the
 % diagonal
@@ -38,16 +44,14 @@ for i = 1:n
     invSqrtDiagQ(i) = sqrt(1/diagQ(i));
 end
 invSqrtQ = diag(invSqrtDiagQ);
-%%
 
-RRt = ua*ua';
-RtR = ua'*ua;
 %% Compute Su and Si as in the pdf: This take a few minutes
 Sup1 = bsxfun(@times,diag(invSqrtP),RRt); % optimization for diagonal matrix multiplication (thanks stack overflow)
 Su = Sup1*invSqrtP;
 %Si = invSqrtQ*RtR*invSqrtQ;
 %Sip1 = bsxfun(@times,diag(invSqrtQ),RtR);
 %Si = Sip1*invSqrtQ;
+fullSu = full(Su);
 
 %% user-user clollaborative (part 3.a)
 X = Su * ua;
