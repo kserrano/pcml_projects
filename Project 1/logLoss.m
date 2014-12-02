@@ -19,6 +19,9 @@ N = length(y);
 % compute the logLoss
 % sometimes p = 1, then the log is not defined. So we ignore those points
 % by using the nanmean function, which doesn't take NaNs into account
-lo = -nanmean((y.*log(p)+(1-y).*log(1-p)));
+badPs = (p == 1);
+temp = (y.*log(p)+(1-y).*log(1-p));
+temp(badPs) = NaN;
+lo = -nanmean(temp);
 
 

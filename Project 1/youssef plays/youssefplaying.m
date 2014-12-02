@@ -33,7 +33,7 @@ noOfVariableValues = zeros(D, 1);
 % SUPPOSING categorial variables have AT MOST 15 classes
 maxClasses = 15;
 
-categorialVariableClasses = cell(81, D+1);
+categorialVariableClasses = cell(1, D+1);
 
 for i=1:D
     temp = unique(X_train(:, i));
