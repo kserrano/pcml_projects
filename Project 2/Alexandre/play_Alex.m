@@ -1,9 +1,21 @@
 %% Play with MR
 % Find indices of 1s in the sparse matrix
 
-[row,col] = find(Yfull>0);
+load songTrain
+s = nonzeros(Ytrain);
+maxCount = max(s);
+histogram(s);
+h = hist(s,10000);
 
-hist(row);
+%% -- Normalize the data
+
+meanY = mean(Ytrain);
+Ytrain = Ytrain - meanY;
+% stdY = std(Ytrain);
+% Ytrain = Ytrain./stdY;
+
+%% -- PCA with MR
+[U,score,latent,tsquared,explained,mu] = pca(full(Ytrain));
 
 %% Play with PD
 
@@ -27,10 +39,10 @@ y = labels;
 [Xtr, yTr, XTe, yTe] = split(y,X,0.8);
 
 
-%% Do the kmeans algorithm
+%% -- Do the kmeans algorithm
 [idx] = kmeans(Xtr,2);
 
-%% Change the classification 
+%% -- Change the classification 
 
 idx(idx == 2) = 1;
 idx(idx == 1) = -1;
