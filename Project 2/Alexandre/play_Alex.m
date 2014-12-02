@@ -1,6 +1,8 @@
 %% Play with MR
 % Find indices of 1s in the sparse matrix
 
+clear all
+close all
 load songTrain
 s = nonzeros(Ytrain);
 maxCount = max(s);
@@ -9,13 +11,19 @@ h = hist(s,10000);
 
 %% -- Normalize the data
 
-meanY = mean(Ytrain);
-Ytrain = Ytrain - meanY;
-% stdY = std(Ytrain);
-% Ytrain = Ytrain./stdY;
+Ynorm = bsxfun(@rdivide,Ytrain,std(Ytrain));
 
 %% -- PCA with MR
-[U,score,latent,tsquared,explained,mu] = pca(full(Ytrain));
+[coeff,score,latent,tsquared,explained,mu] = pca(full(Ytrain));
+
+%% -- SVD with MR
+[U,Sigma,V] = svd(full(Ytrain),'econ');
+s = diag(Sigma); % Vector of singular values
+normsqS = sum(s.^2);
+plot(cumsum(s.^2)/normsqS,'x')  % Cumulative fraction of variance explained
+xlabel('Mode k')
+ylabel('Cumulative Variance fraction explained')
+ylim([0 1])
 
 %% Play with PD
 
