@@ -1,0 +1,15 @@
+%% Load file
+close all; clear all;
+load('../songTrain.mat');
+Ytrain(Ytrain>0);
+ua = Ytrain; % users-artists 
+
+%% Take the mean per artist 
+s = sum(ua>0);
+
+s(s==0) = 1;
+m = sum(ua)./s;
+
+
+rms
+
