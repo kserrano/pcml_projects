@@ -1,4 +1,6 @@
 clearvars;
+clc
+close all
 
 % -- GETTING STARTED WITH THE PERSON DETECTION DATASET -- %
 % IMPORTANT: Make sure you downloaded Piotr's toolbox: http://vision.ucsd.edu/~pdollar/toolbox/doc/
@@ -13,30 +15,33 @@ clearvars;
 % ---------------------------------------------
 % ====>   FIX TO YOUR ACTUAL TOOLBOX PATH <====
 % ---------------------------------------------
-addpath(genpath('../toolbox/'));
+%addpath(genpath('../toolbox/'));
 
 % Load both features and training images
 load train_feats;
 load train_imgs;
+N = length(imgs);
 
 %% --browse through the images, and show the feature visualization beside
 %  -- You should explore the features for the positive and negative
 %  examples and understand how they resemble the original image.
 for i=1:10
     clf();
+   
+    chosenImageIndex = floor(rand*N);
     
     subplot(121);
-    imshow(imgs{i}); % image itself
+    imshow(imgs{chosenImageIndex}); % image itself
     
     subplot(122);
-    im( hogDraw(feats{i}) ); colormap gray;
+    imagesc( hogDraw(feats{chosenImageIndex}) ); colormap gray;
     axis off; colorbar off;
     
     pause;  % wait for keydo that then, 
 end
 
 %% -- Generate feature vectors (so each one is a row of X)
-fprintf('Generating feature vectors..\n');
+disp('Generating feature vectors..');
 D = numel(feats{1});  % feature dimensionality
 X = zeros([length(imgs) D]);
 
@@ -45,7 +50,7 @@ for i=1:length(imgs)
 end
 
 %% -- Example: split half and half into train/test
-fprintf('Splitting into train/test..\n');
+disp('Splitting into train/test..');
 % NOTE: you should do this randomly! and k-fold!
 Tr.idxs = 1:2:size(X,1);
 Tr.X = X(Tr.idxs,:);
@@ -56,12 +61,12 @@ Te.X = X(Te.idxs,:);
 Te.y = labels(Te.idxs);
 
 %%
-fprintf('Training simple neural network..\n');
+disp('Training simple neural network..');
 
 %--- WARNING --
 % You need to download the Deep Learning Toolbox and add it to your path
 % You can get it from https://github.com/rasmusbergpalm/DeepLearnToolbox/archive/master.zip
-addpath(genpath('where/the/deeplearningtoolboxis/'));
+%addpath(genpath('where/the/deeplearningtoolboxis/'));
 
 % --- NOTE ---
 % Using this toolbox requires that you understand very well neural networks
@@ -71,12 +76,12 @@ addpath(genpath('where/the/deeplearningtoolboxis/'));
 %
 % Make sure you understand what is going on below!
 
-rng(8339);  % fix seed, this    NN is very sensitive to initialization
+%rng(8339);  % fix seed, this    NN is very sensitive to initialization
 
 % setup NN. The first layer needs to have number of features neurons,
 %  and the last layer the number of classes (here two).
 nn = nnsetup([size(Tr.X,2) 10 2]);
-opts.numepochs =  50;   %  Number of full sweeps through data
+opts.numepochs =  30;   %  Number of full sweeps through data
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
 
 % if == 1 => plots trainin error as the NN is trained
@@ -115,14 +120,27 @@ nnPred = nn.a{end};
 % we want a single score, subtract the output sigmoids
 nnPred = nnPred(:,1) - nnPred(:,2);
 
+%% with dropout
+
+nn.dropoutFraction = 0.5;
+[nn, L] = nntrain(nn, Tr.normX, LL, opts);
+
+nn.testing = 1;
+nn = nnff(nn, Te.normX, zeros(size(Te.normX,1), nn.size(end)));
+nn.testing = 0;
+
+% predict on the test set
+nnPredWithDropout = nn.a{end};
+nnPredWithDropout = nnPredWithDropout(:,1) - nnPredWithDropout(:,2);
+
 %% See prediction performance
-fprintf('Plotting performance..\n');
+disp('Plotting performance..');
 % let's also see how random predicition does
 randPred = rand(size(Te.y));
 
 % and plot all together, and get the performance of each
-methodNames = {'Neural Network', 'Random'}; % this is to show it in the legend
-avgTPRList = evaluateMultipleMethods( Te.y > 0, [nnPred,randPred], true, methodNames );
+methodNames = {'Neural Network with dropout 0.5', 'Neural Network', 'Random'}; % this is to show it in the legend
+avgTPRList = evaluateMultipleMethods( Te.y > 0, [nnPredWithDropout, nnPred,randPred], true, methodNames );
 
 % now you can see that the performance of each method
 % is in avgTPRList. You can see that random is doing very bad.
@@ -137,7 +155,7 @@ for i=20:30  % just 10 of them, though there are thousands
     imshow(imgs{Te.idxs(i)}); % image itself
     
     subplot(122);
-    im( hogDraw(feats{Te.idxs(i)}) ); colormap gray;
+    imagesc( hogDraw(feats{Te.idxs(i)}) ); colormap gray;
     axis off; colorbar off;
     
     % show if it is classified as pos or neg, and true label
