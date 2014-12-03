@@ -40,8 +40,9 @@ rand('state',0)
 nn = nnsetup([784 100 10]);
 
 nn.dropoutFraction = 0.5;   %  Dropout fraction 
-opts.numepochs =  1;        %  Number of full sweeps through data
+opts.numepochs =  20;        %  Number of full sweeps through data
 opts.batchsize = 100;       %  Take a mean gradient step over this many samples
+opts.plot = 1;
 
 nn = nntrain(nn, train_x, train_y, opts);
 

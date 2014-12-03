@@ -1,4 +1,4 @@
-clearvars;
+clear all;
 clc
 close all
 
@@ -40,15 +40,6 @@ for i=1:10
     pause;  % wait for keydo that then, 
 end
 
-%% -- Generate feature vectors (so each one is a row of X)
-disp('Generating feature vectors..');
-D = numel(feats{1});  % feature dimensionality
-X = zeros([length(imgs) D]);
-
-for i=1:length(imgs)
-    X(i,:) = feats{i}(:);  % convert to a vector of D dimensions
-end
-
 %% -- Example: split half and half into train/test
 disp('Splitting into train/test..');
 % NOTE: you should do this randomly! and k-fold!
@@ -63,32 +54,6 @@ Te.y = labels(Te.idxs);
 %%
 disp('Training simple neural network..');
 
-%--- WARNING --
-% You need to download the Deep Learning Toolbox and add it to your path
-% You can get it from https://github.com/rasmusbergpalm/DeepLearnToolbox/archive/master.zip
-%addpath(genpath('where/the/deeplearningtoolboxis/'));
-
-% --- NOTE ---
-% Using this toolbox requires that you understand very well neural networks
-% and that you go through the examples in their README file (github).
-% You may also need to get into the toolbox code to be able to experiment
-% with it.
-%
-% Make sure you understand what is going on below!
-
-%rng(8339);  % fix seed, this    NN is very sensitive to initialization
-
-% setup NN. The first layer needs to have number of features neurons,
-%  and the last layer the number of classes (here two).
-nn = nnsetup([size(Tr.X,2) 10 2]);
-opts.numepochs =  30;   %  Number of full sweeps through data
-opts.batchsize = 100;  %  Take a mean gradient step over this many samples
-
-% if == 1 => plots trainin error as the NN is trained
-opts.plot               = 1; 
-
-nn.learningRate = 2;
-
 % this neural network implementation requires number of samples to be a
 % multiple of batchsize, so we remove some for this to be true.
 numSampToUse = opts.batchsize * floor( size(Tr.X) / opts.batchsize);
@@ -102,8 +67,9 @@ Tr.y = Tr.y(1:numSampToUse);
 LL = [1*(Tr.y>0)  1*(Tr.y<0)];  % first column, p(y=1)
                                    % second column, p(y=-1)
 
-[nn, L] = nntrain(nn, Tr.normX, LL, opts);
 
+
+[ trainedNN ] = trainNewNN( dataInput, dataOutput, dimensions, noEpochs, batchSize, plotFlag, learningRate );
 
 Te.normX = normalize(Te.X, mu, sigma);  % normalize test data
 
@@ -121,6 +87,8 @@ nnPred = nn.a{end};
 nnPred = nnPred(:,1) - nnPred(:,2);
 
 %% with dropout
+
+nn.learningRate = 1; % otherwise the cost function doesn't converge
 
 nn.dropoutFraction = 0.5;
 [nn, L] = nntrain(nn, Tr.normX, LL, opts);
