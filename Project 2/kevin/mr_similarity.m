@@ -1,6 +1,6 @@
 %% Load file
 close all; clear all;
-load('../songTrain.mat');
+load('songTrain.mat');
 %Ytrain(Ytrain>0) = 1;
 ua = Ytrain; % users-artists 
 S = artistName;
@@ -64,7 +64,7 @@ for j = 2:k+1
     topKL(1,j)={j-1};
 end
 for i = 1:l
-    [sortX,sortIdx] = sort(X(i,:),'descend'); % sort the first 100 shows scores for user bob
+    [sortX,sortIdx] = sort(X(i,:),'descend'); % sort the scores for user bob
     maxKVal = sortX(1:k)
     maxKindx = sortIdx(1:k);
     topKArtists = S(maxKindx); % get the name of the artists
@@ -72,32 +72,8 @@ for i = 1:l
     topKL(i+1,2:end) = topKArtists;
 end
 topKL
-%% movie-movie collaborative (part 3.b)
-% Y = ua * Si;
-% k = 5;
-% % get the top-k values and their indices
-% [sortY,sortIdy] = sort(Y(200,1:100),'descend');
-% maxKValy = sortY(1:k)
-% maxKindy = sortIdy(1:k);
-% topKshowy = S(maxKindy) % get the name of the shows
-% %% Part 3.c
-% bobFile = fopen('bob.txt','r');
-% sizeBob= [563 1];
-% formatSpec = '%f';
-% bobM = fscanf(bobFile,formatSpec,sizeBob)';
-% %user-user filtering
-% watched = 0;
-% for i = 1:k
-%     if(bobM(sortIdx(i))==1)
-%         watched = watched+1;
-%     end
-% end
-% prec1 = watched/k
-% %item-item filtering
-% watched = 0;
-% for i = 1:k
-%     if(bobM(sortIdy(i))==1)
-%         watched = watched+1;
-%     end
-% end
-% prec2 = watched/k
+%% Are the friends similar?
+idx1 = find(Gtrain==1);
+simOfFriends = Su(idx1);
+meanSimilarity = mean(simOfFriends)
+
