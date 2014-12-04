@@ -19,6 +19,8 @@ noOfLambdas = max(1, length(lambdas));
 errorsTr = zeros(noOfSeeds, K, noOfLambdas);
 errorsTe = zeros(noOfSeeds, K, noOfLambdas);
 
+parpool
+
 % K-fold cross validation
 for s = 1:noOfSeeds
     

@@ -54,37 +54,13 @@ Te.y = labels(Te.idxs);
 %%
 disp('Training simple neural network..');
 
-% this neural network implementation requires number of samples to be a
-% multiple of batchsize, so we remove some for this to be true.
-numSampToUse = opts.batchsize * floor( size(Tr.X) / opts.batchsize);
-Tr.X = Tr.X(1:numSampToUse,:);
-Tr.y = Tr.y(1:numSampToUse);
-
-% normalize data
-[Tr.normX, mu, sigma] = zscore(Tr.X); % train, get mu and std
-
-% prepare labels for NN
-LL = [1*(Tr.y>0)  1*(Tr.y<0)];  % first column, p(y=1)
-                                   % second column, p(y=-1)
-
 
 
 [ trainedNN ] = trainNewNN( dataInput, dataOutput, dimensions, noEpochs, batchSize, plotFlag, learningRate );
 
 Te.normX = normalize(Te.X, mu, sigma);  % normalize test data
 
-% to get the scores we need to do nnff (feed-forward)
-%  see for example nnpredict().
-% (This is a weird thing of this toolbox)
-nn.testing = 1;
-nn = nnff(nn, Te.normX, zeros(size(Te.normX,1), nn.size(end)));
-nn.testing = 0;
-
-% predict on the test set
-nnPred = nn.a{end};
-
-% we want a single score, subtract the output sigmoids
-nnPred = nnPred(:,1) - nnPred(:,2);
+predictNNBinaryOutput(Te.X, nn )
 
 %% with dropout
 

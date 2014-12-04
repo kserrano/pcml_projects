@@ -86,7 +86,7 @@ nn.learningRate = 2;
 
 % this neural network implementation requires number of samples to be a
 % multiple of batchsize, so we remove some for this to be true.
-numSampToUse = opts.batchsize * floor( size(Tr.X) / opts.batchsize);
+numSampToUse = opts.batchsize * floor( size(Tr.) / opts.batchsize);
 Tr.X = Tr.X(1:numSampToUse,:);
 Tr.y = Tr.y(1:numSampToUse);
 
