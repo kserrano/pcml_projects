@@ -32,6 +32,9 @@ ylim([0 1])
 
 %% Play with PD
 
+clear all
+close all
+
 % Load both features and training images
 load train_feats;
 load train_imgs;
@@ -86,7 +89,9 @@ randPred = rand(size(Te.y))*2-1;
 % this is to show it in the legend
 methodNames = {'Soft k-means', 'Random'};
 
-avgTPRList = evaluateMultipleMethods( Te.y > 0, [softkPredict,randPred], true, methodNames );
+softkPredict = softkPredict(:,1) - softkPredict(:,2);
+
+avgTPRList = evaluateMultipleMethods( Te.y > 0, [softkPredict, randPred], true, methodNames );
 
 %% -- Change the classification 
 
