@@ -33,11 +33,3 @@ Te.y = labels(Te.idxs);
 %%
 SVMModelTr = fitcsvm(Tr.X,Tr.y);
 
-%% plot
-svTr = SVMModelTr.SupportVectors;
-figure
-gscatter(X(:,1),X(:,2),labels)
-hold on
-plot(svTr(:,1),svTr(:,2),'ko','MarkerSize',10)
-legend('-1','1','Support Vector')
-hold off
