@@ -1,4 +1,4 @@
-function L= computeCostMean(y,m)
+function L= computeCost(y,m)
 
 N = length(y);
 

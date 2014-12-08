@@ -29,7 +29,24 @@ Tr.y = labels(Tr.idxs);
 Te.idxs = 2:2:size(X,1);
 Te.X = X(Te.idxs,:);
 Te.y = labels(Te.idxs);
-%% SVM
-tpr = wrapperSVM(Tr,Te)
 
+%% create the model
+fprintf('Creating the model..\n');
+SVMModelTr = fitcsvm(Tr.X,Tr.y);
+
+%% predict new data
+fprintf('Predict new data...\n');
+[predlabels, scores] = predict(SVMModelTr,Te.X);
+
+
+%% count correctness
+
+%%
+scores = scores(:,1) - scores(:,2);
+%% compute TPR
+% and plot all together, and get the performance of each
+
+methodNames = {'SVM'}; % this is to show it in the legend
+avgTPRList = evaluateMultipleMethods( Te.y > 0, [scores], true, methodNames );
+avgTPRList
 %% Compute ROC ?
