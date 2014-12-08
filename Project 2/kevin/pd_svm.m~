@@ -40,13 +40,13 @@ fprintf('Predict new data...\n');
 
 
 %% count correctness
-count = sum(predlabels==Te.y)/length(Te.y)
+
 %%
-sc = scores(:,1) + scores(:,2);
+scores = scores(:,1) - scores(:,2);
 %% compute TPR
 % and plot all together, and get the performance of each
 
-methodNames = {'SVM?','SVM'}; % this is to show it in the legend
+methodNames = {'SVM'}; % this is to show it in the legend
 avgTPRList = evaluateMultipleMethods( Te.y > 0, [scores], true, methodNames );
 avgTPRList
 %% Compute ROC ?
