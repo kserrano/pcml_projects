@@ -71,7 +71,7 @@ addpath(genpath('where/the/deeplearningtoolboxis/'));
 %
 % Make sure you understand what is going on below!
 
-rng(8339);  % fix seed, this    NN is very sensitive to initialization
+rand('state',8339);  % fix seed, this    NN is very sensitive to initialization
 
 % setup NN. The first layer needs to have number of features neurons,
 %  and the last layer the number of classes (here two).

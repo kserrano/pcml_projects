@@ -253,6 +253,9 @@ disp(['rank of data columns is :' num2str(ranktX)]);
 
 % simple logistic regression
 alpha = 0.1;
+
+%%
+
 betaLR = logisticRegression(y_train,tX,alpha);
 temp = tX*betaLR;
 [LRrmseTr, LRrmseTe] = genericKCV( y_train, tX,...
