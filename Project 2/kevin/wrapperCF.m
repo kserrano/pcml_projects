@@ -1,4 +1,4 @@
-function rmse = wrapperCF( ua_tr, ua_te, S )
+function predictX = wrapperCF( ua_tr, ua_te, S )
 %WRAPPERCF Summary of this function goes here
 %   Detailed explanation goes here
 % ua_tr_tr : Ytrain_train
