@@ -66,7 +66,7 @@ LRTPR = TPRs(Te.y, LRPred);
 
 %% Fitting using penalized logistic regression - simple run
 
-lambda = 1/50;
+lambda = 44;
 betaPLR = penLogisticRegression(Tr.y,Tr.tX,alpha,lambda);
 temp2 = Te.tX*betaPLR;
 PLRPred = probEstimate(temp2)*2-1;
