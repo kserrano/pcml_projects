@@ -7,7 +7,7 @@ load songTrain
 s = nonzeros(Ytrain);
 maxCount = max(s);
 histogram(s);
-h = hist(s,10000);
+h = hist(s,3500);
 
 %% -- Normalize the data
 

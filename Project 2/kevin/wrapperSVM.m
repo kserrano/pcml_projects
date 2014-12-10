@@ -17,8 +17,8 @@ sc = scores(:,1) + scores(:,2);
 %% compute TPR
 % and plot all together, and get the performance of each
 
-methodNames = {'SVM?','SVM'}; % this is to show it in the legend
-avgTPRList = evaluateMultipleMethods( Te.y > 0, [scores], true, methodNames );
+methodNames = {'SVM'}; % this is to show it in the legend
+avgTPRList = evaluateMultipleMethods( Te.y > 0, scores, true, methodNames );
 
 
 end
