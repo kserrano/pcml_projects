@@ -1,5 +1,5 @@
 function [bestParameter, achievedErrorTe ] = analyzeKCVresults( errorTe,...
-    errorTr, parameterName, parameterValues, givenTitle, errorName )
+    errorTr, parameterName, parameterValues, givenTitle, errorName, modeFunction )
 % plots the results from cross-validating the given parameter, for
 % inspecttion and also retrieves the optimal parameter value and returns it
 
@@ -18,7 +18,8 @@ title(givenTitle);
 
 % computes the best parameter (usually a penalizazion term lambda) that
 % achieves the best test Error, returns both
-[achievedErrorTe, bestParameter] = min(avgErrorTe);
+
+[achievedErrorTe, bestParameter] = modeFunction(avgErrorTe);
 bestParameter = parameterValues(bestParameter);
 
 end
