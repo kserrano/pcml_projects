@@ -1,0 +1,12 @@
+\BOOKMARK [1][-]{section.1}{Exploratory Data analysis}{}% 1
+\BOOKMARK [1][-]{section.2}{People Detection}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Neural Networks}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Penalize Logistic regression \(cross-validation for }{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{K-means}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Support Vector Machine}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Music recommendation}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{Histogram}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.2}{PCA/SVD}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.3}{Basic mean-based predictions}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.4}{Collaborative-filtering}{section.3}% 11
+\BOOKMARK [1][-]{section.4}{Summary}{}% 12
