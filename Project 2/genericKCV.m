@@ -1,6 +1,6 @@
 function [errorsTr, errorsTe] = genericKCV( y, inputX,...
-    fittingFunction, errorFunction, parameter, K, alpha, noOfSeeds,...
-    constantNNoptions, normalizeFlag)
+    fittingFunction, predictionFunction, errorFunction, parameter, K, alpha, noOfSeeds,...
+    constantNNoptions, constantSVMoptions, normalizeFlag)
 % generic cross-validation function used to estimate the best parameter
 % (the one giving the best Test/Train error pair (more emphasis on the
 % latter). It can be used with any fitting method (e.g. least squares) and
@@ -53,7 +53,7 @@ for s = 1:noOfSeeds
             % this ASSUMES that all input variables are gaussian
             % distributed
             switch fittingFunctionType
-                case 10
+                case {5, 10}
                     % these cases correspond to the cases where inputX = tX
                     % ( has a column of ones in the beginning
                     
@@ -82,6 +82,23 @@ for s = 1:noOfSeeds
                     end
                 case 4 % only penalized log. reg. used 4 arguments
                     beta = fittingFunction(yTr, tXTr, alpha, parameter(i));
+                case 5 % only SVM fitting uses 5 arguments
+                    
+                    kernel = constantSVMoptions.kernel;
+                    
+                    if isfield(constantSVMoptions, 'kernelScale')
+                        kernelScale = constantSVMoptions.kernelScale;
+                        
+                        % then we're validating the C and not this
+                        model = fittingFunction( yTr, tXTr, kernel, kernelScale, parameter(i) );
+                        
+                    elseif isfield(constantSVMoptions, 'C')
+                        
+                        C = constantSVMoptions.C;
+                        % then we're validating the kernalScale and not this
+                        model = fittingFunction( yTr, tXTr, kernel, parameter(i), C);
+                    end
+                    
                 case 10 % only NN takes so many input arguments !
                     
                     dimensions = constantNNoptions.dimensions;
@@ -106,7 +123,7 @@ for s = 1:noOfSeeds
                         
                         dropout = constantNNoptions.dropout;
                         
-                        NN = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                        model = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
                             batchSize, 0, learningRate, dropout, parameter(i), activFun );
                         
                     elseif isfield(constantNNoptions, 'L2Weight')      
@@ -115,7 +132,7 @@ for s = 1:noOfSeeds
                         
                         L2Weight = constantNNoptions.L2Weight;
                         
-                        NN = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                        model = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
                             batchSize, 0, learningRate, parameter(i), L2Weight, activFun );
                         
                     else
@@ -126,13 +143,13 @@ for s = 1:noOfSeeds
             
             % handling predictions
             switch fittingFunctionType
-                case 10 % neural networks
+                case {5, 10} % neural networks & SVM
 
                     % training set prediction
-                    trainPred = predictNNBinaryOutput( tXTr, NN );
+                    trainPred = predictionFunction( tXTr, model );
 
                     % testing set prediction
-                    testPRed = predictNNBinaryOutput( tXTe, NN );
+                    testPRed = predictionFunction( tXTe, model );
                 otherwise
 
                     % all cases other than NN model can predict in

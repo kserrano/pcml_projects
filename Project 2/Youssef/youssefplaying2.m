@@ -1,8 +1,8 @@
 % youssef's playing with the data script, project 2
 
-clear all;
-close all;
-clc
+% clear all;
+% close all;
+% clc
 
 projectDir = '/users/youssef/Documents/Matlab/PCML/Projects/Project 2';
 addpath(genpath(projectDir));
