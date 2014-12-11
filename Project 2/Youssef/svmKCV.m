@@ -28,7 +28,7 @@ y = labels;
 
 normalizeFlag = 1;
 K = 4;
-noOfSeeds = 3;
+noOfSeeds = 2;
 constantSVMoptions.kernel = 'rbf';
 
 %% KCVating the kernel scale (sigma for rbf)
@@ -39,9 +39,13 @@ constantSVMoptions.kernel = 'rbf';
 % WHILE (test to see how much 1 model takes to train, if it's t minutes than the
 % code is going to take t*noOfSeeds*K*noOfSigmas/60 hours !! For 10 minutes
 % with the current parameters if it's 10 minutes per model it's 10*3*4*4/60
-% = 8 hours. Measure time and change parameters yourself
+% = 8 hours. Measure time and change parameters yourself. 
 
-noOfSigmas = 3;
+%This is with the old generic KCV function, the updated one using parallel
+%pools is faster, but no guarantee on how much faster, though probably a
+%lot.
+
+noOfSigmas = 12;
 sigmas = logspace(-1, 3, noOfSigmas);
 constantSVMoptions.C = []; % indicates that this isn't the parameter to genericKCV
 

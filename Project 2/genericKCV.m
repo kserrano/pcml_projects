@@ -24,14 +24,20 @@ noOfParamVals = max(1, length(parameter));
 errorsTr = zeros(noOfSeeds, K, noOfParamVals);
 errorsTe = zeros(noOfSeeds, K, noOfParamVals);
 
+parpool
+
 % K-fold cross validation
-for s = 1:noOfSeeds
+parfor s = 1:noOfSeeds
+    
+    tempTr = zeros(K, noOfParamVals);
+    tempTe = zeros(K, noOfParamVals);
     
     % split data in K fold (we will only create indices)
     setSeed(s);
     N = size(y,1);
     idx = randperm(N);
     Nk = floor(N/K);
+    idxCV = zeros(K, Nk);
     for k = 1:K
         idxCV(k,:) = idx(1+(k-1)*Nk:k*Nk);
     end
@@ -49,25 +55,27 @@ for s = 1:noOfSeeds
             
             fittingFunctionType = nargin(fittingFunction);
             
+            if normalizeFlag
             % handling normalization
             % this ASSUMES that all input variables are gaussian
             % distributed
-            switch fittingFunctionType
-                case {5, 10}
-                    % these cases correspond to the cases where inputX = tX
-                    % ( has a column of ones in the beginning
-                    
-                    [tXTr, mu, sigma] = zscore(tXTr); % train, get mu and std
-                    tXTe = normalize(tXTe, mu, sigma);  % normalize test data
-                   
-                otherwise
-                    % these cases correspond to the cases where inputX = X
-                    
-                    [normXTr, mu, sigma] = zscore(tXTr(:, 2:end)); % train, get mu and std
-                    normXTe = normalize(tXTe(:, 2:end), mu, sigma);  % normalize test data
-                    
-                    tXTr = [ones(size(normXTr, 1), 1) normXTr];
-                    tXTe = [ones(size(normXTe, 1), 1) normXTe];
+                switch fittingFunctionType
+                    case {5, 10}
+                        % these cases correspond to the cases where inputX = tX
+                        % ( has a column of ones in the beginning
+
+                        [tXTr, mu, sigma] = zscore(tXTr); % train, get mu and std
+                        tXTe = normalize(tXTe, mu, sigma);  % normalize test data
+
+                    otherwise
+                        % these cases correspond to the cases where inputX = X
+
+                        [normXTr, mu, sigma] = zscore(tXTr(:, 2:end)); % train, get mu and std
+                        normXTe = normalize(tXTe(:, 2:end), mu, sigma);  % normalize test data
+
+                        tXTr = [ones(size(normXTr, 1), 1) normXTr];
+                        tXTe = [ones(size(normXTe, 1), 1) normXTe];
+                end
             end
 
             switch fittingFunctionType
@@ -159,13 +167,16 @@ for s = 1:noOfSeeds
             end
 
             % training and test cost
-            errorsTr(s, k, i) = errorFunction(yTr, trainPred);
+            tempTr(k, i) = errorFunction(yTr, trainPred);
 
             % testing MSE using least squares
-            errorsTe(s, k, i) = errorFunction(yTe, testPRed);
+            tempTe(k, i) = errorFunction(yTe, testPRed);
 
         end
     end
+    
+    errorsTr(s, :, :) = tempTr;
+    errorsTr(s, :, :) = tempTe;
 end
 
 % averages over the k folds
