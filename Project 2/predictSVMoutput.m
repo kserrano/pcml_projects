@@ -9,7 +9,7 @@ fprintf('Predict new data...\n');
 % finalScore = finalScore./max(finalScore);
 % finalScore = 2*finalScore-1;
 
-finalScore = scores(:, 2)
+finalScore = scores(:, 2);
 
 end
 
