@@ -53,19 +53,15 @@ for s = 1:noOfSeeds
             % this ASSUMES that all input variables are gaussian
             % distributed
             switch fittingFunctionType
-                case 9
+                case 10
                     % these cases correspond to the cases where inputX = tX
                     % ( has a column of ones in the beginning
-                    
-                    % start counting at second column the input variables, because first one is a dummy column of 1's
-                    nonNormalInputVars = nonNormalInputVars + 1;
                     
                     [tXTr, mu, sigma] = zscore(tXTr); % train, get mu and std
                     tXTe = normalize(tXTe, mu, sigma);  % normalize test data
                    
                 otherwise
-                    % these cases correspond to the cases where inputX = tX
-                    % ( has a column of ones in the beginning
+                    % these cases correspond to the cases where inputX = X
                     
                     [normXTr, mu, sigma] = zscore(tXTr(:, 2:end)); % train, get mu and std
                     normXTe = normalize(tXTe(:, 2:end), mu, sigma);  % normalize test data
@@ -86,12 +82,14 @@ for s = 1:noOfSeeds
                     end
                 case 4 % only penalized log. reg. used 4 arguments
                     beta = fittingFunction(yTr, tXTr, alpha, parameter(i));
-                case 9 % only NN takes so many input arguments !
+                case 10 % only NN takes so many input arguments !
                     
                     dimensions = constantNNoptions.dimensions;
                     noEpochs = constantNNoptions.noEpochs;
                     batchSize = constantNNoptions.batchSize;
                     learningRate = constantNNoptions.learningRate;
+                    
+                    activFun = constantNNoptions.activationFun;
                     
                     % the data size needs to be a multiple of the batchsize
                     numTrSampToUse = batchSize * floor( size(tXTr) / batchSize);
@@ -100,14 +98,16 @@ for s = 1:noOfSeeds
                     tXTr = tXTr(1:numTrSampToUse,:);
                     yTr = yTr(1:numTrSampToUse);
                     
+                    dimensions = [size(tXTr, 2) dimensions];
+                    
                     if isfield(constantNNoptions, 'dropout')
                         % we're varying the L2 weight and keeping the
                         % dropout constant in this case
                         
                         dropout = constantNNoptions.dropout;
                         
-                        NN = fittingFunction( tXtr, yTr, dimensions, noEpochs,...
-                            batchSize, plotFlag, learningRate, dropout, parameter(i) );
+                        NN = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                            batchSize, 0, learningRate, dropout, parameter(i), activFun );
                         
                     elseif isfield(constantNNoptions, 'L2Weight')      
                         % we're varying the dropout and keeping the
@@ -115,8 +115,8 @@ for s = 1:noOfSeeds
                         
                         L2Weight = constantNNoptions.L2Weight;
                         
-                        NN = fittingFunction( tXtr, yTr, dimensions, noEpochs,...
-                            batchSize, plotFlag, learningRate, parameter(i), L2Weight );
+                        NN = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                            batchSize, 0, learningRate, parameter(i), L2Weight, activFun );
                         
                     else
                         error('constant NN options are missing either dropout value or L2 weight penalty')
@@ -126,7 +126,7 @@ for s = 1:noOfSeeds
             
             % handling predictions
             switch fittingFunctionType
-                case 9
+                case 10 % neural networks
 
                     % training set prediction
                     trainPred = predictNNBinaryOutput( tXTr, NN );

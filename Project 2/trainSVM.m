@@ -1,4 +1,5 @@
-function [ SVMModelTr ] = trainSVM( YTr, XTr, kernel, C )
+function [ SVMModelTr ] = trainSVM( YTr, XTr, kernel, kernelScale, C )
+% use caution with RBF: it completely breaks things !
 
 % create the model
 fprintf('Creating the model..\n');
@@ -11,6 +12,10 @@ if isempty(kernel)
     kernel = 'linear';
 end
 
-SVMModelTr = fitcsvm(XTr,YTr, 'BoxConstraint', C, 'KernelFunction', kernel);
+if isempty(kernelScale)
+    kernelScale = 1;
+end
+
+SVMModelTr = fitcsvm(XTr,YTr, 'BoxConstraint', C, 'KernelFunction', kernel, 'KernelScale', kernelScale);
 
 end
