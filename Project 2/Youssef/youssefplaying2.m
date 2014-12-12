@@ -1,8 +1,8 @@
 % youssef's playing with the data script, project 2
 
-% clear all;
-% close all;
-% clc
+clear all;
+close all;
+clc
 
 projectDir = '/users/youssef/Documents/Matlab/PCML/Projects/Project 2';
 addpath(genpath(projectDir));
@@ -133,9 +133,21 @@ nnPredWithReg = predictNNBinaryOutput(Te.normX, trainedNN3 );
 
 %% Training neural networks - simple NN + dropout + L2 regularization
 rand('seed',8339);
-[ trainedNN3 ] = trainNewBinaryNN(Tr.normX, Tr.y, dimensions, noEpochs, ...
+[ trainedNN4 ] = trainNewBinaryNN(Tr.normX, Tr.y, dimensions, noEpochs, ...
     batchSize, plotFlag, learningRate, dropout, [], 'sigm' );
-nnPredWithDropoutAndSigm = predictNNBinaryOutput(Te.normX, trainedNN3 );
+nnPredWithDropoutAndSigm = predictNNBinaryOutput(Te.normX, trainedNN4 );
+
+%% Training neural networks - final dropout + L2 regularization + sigm
+
+rand('seed',8339);
+
+dimensions = [size(Tr.X,2) 50 25 10 2];
+lambda = 10^-6;
+dropout = 0.3;
+
+[ trainedNN5 ] = trainNewBinaryNN(Tr.normX, Tr.y, dimensions, noEpochs, ...
+    batchSize, plotFlag, learningRate, dropout, [], 'sigm' );
+nnPredWithDropoutAndSigm = predictNNBinaryOutput(Te.normX, trainedNN5 );
 
 %% comparing results
 rand('state',8339);

@@ -24,8 +24,6 @@ noOfParamVals = max(1, length(parameter));
 errorsTr = zeros(noOfSeeds, K, noOfParamVals);
 errorsTe = zeros(noOfSeeds, K, noOfParamVals);
 
-parpool
-
 % K-fold cross validation
 parfor s = 1:noOfSeeds
     
@@ -176,7 +174,7 @@ parfor s = 1:noOfSeeds
     end
     
     errorsTr(s, :, :) = tempTr;
-    errorsTr(s, :, :) = tempTe;
+    errorsTe(s, :, :) = tempTe;
 end
 
 % averages over the k folds

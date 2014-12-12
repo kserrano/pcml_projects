@@ -28,7 +28,7 @@ y = labels;
 
 normalizeFlag = 1;
 K = 4;
-noOfSeeds = 2;
+noOfSeeds = 6;
 constantSVMoptions.kernel = 'rbf';
 
 %% KCVating the kernel scale (sigma for rbf)
@@ -45,8 +45,9 @@ constantSVMoptions.kernel = 'rbf';
 %pools is faster, but no guarantee on how much faster, though probably a
 %lot.
 
-noOfSigmas = 12;
-sigmas = logspace(-1, 3, noOfSigmas);
+noOfSigmas = 6;
+% sigmas = logspace(-1, 3, noOfSigmas);
+sigmas = logspace(30, 200, noOfSigmas);
 constantSVMoptions.C = []; % indicates that this isn't the parameter to genericKCV
 
 [errorsTr, errorsTe] = genericKCV( y, X,...
@@ -54,4 +55,4 @@ constantSVMoptions.C = []; % indicates that this isn't the parameter to genericK
    [], constantSVMoptions, normalizeFlag);
 
 % it saves the results directly, these are to be shared
-save('SVM KCV results (light)','errorsTr', 'errorsTe', 'noOfSeeds', 'K', 'sigmas', 'constantSVMoptions');
+save('SVM KCV results (light) - focalized','errorsTr', 'errorsTe', 'noOfSeeds', 'K', 'sigmas', 'constantSVMoptions');
