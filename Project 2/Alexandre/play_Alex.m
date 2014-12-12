@@ -17,7 +17,12 @@ Ynorm = Ynorm';
 
 %% -- PCA with MR
 [coeff,score,latent,tsquared,explained,mu] = pca(full(Ynorm));
-Ynew = sparse(score)*sparse(coeff');
+% Ynew = sparse(score)*sparse(coeff');
+
+Yestim = score*coeff' + repmat(mu,size(Ynorm,1),1);
+
+RMSE = sqrt(abs(mean(Ynorm(:).^2 - Yestim(:).^2)));
+
 
 %% -- SVD with MR
 

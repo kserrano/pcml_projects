@@ -5,7 +5,7 @@ clear all;
 close all;
 clc
 
-projectDir = '/users/youssef/Documents/Matlab/PCML/Projects/Project 2';
+projectDir = '/Users/alexandrehelfre/Dropbox/MATLAB/pcml_projects/Project 2';
 addpath(genpath(projectDir));
 rmpath([projectDir '/Piotr toolbox'])
 cd(projectDir);
