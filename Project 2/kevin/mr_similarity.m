@@ -8,7 +8,7 @@ ua_te = Ytest_weak;
 S = artistName;
 %%
 
-rmse = wrapperCF(ua_tr,ua_te,S);
+prediction = wrapperCF(ua_tr,ua_te,S);
 
 %% Are the friends similar?
 idx1 = find(Gtrain==1);
