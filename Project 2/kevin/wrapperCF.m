@@ -75,7 +75,7 @@ Su = Sup1*invSqrtP;
 %Si = invSqrtQ*RtR*invSqrtQ;
 %Sip1 = bsxfun(@times,diag(invSqrtQ),RtR);
 %Si = Sip1*invSqrtQ;
-fullSu = full(Su);
+
 
 %% user-user clollaborative (part 3.a)
 X = sparse(Su * ua_tr);
@@ -83,6 +83,7 @@ X = sparse(Su * ua_tr);
 %% Get the score for each 0
 
 umrep = repmat(users_mean,1,size(X,2));
+ummax = repmat(max(ua_tr),1,size(X,2));
 X = X';
 ua_col= X(:);
 %idx0 = find(ua_col>0);
@@ -90,7 +91,8 @@ ua_col= X(:);
 umrep = umrep(:);
 %umrep = umrep(idx0);
 
-predictX = ua_col.*umrep;
+predictX = (ua_col.*ummax).^0.8;
+
 %for i = 1:size(X0,1)
  %   predictX(i,:) = X0(i,:).*users_mean(i);
 %end
@@ -99,8 +101,8 @@ ua_te = ua_te';
 ua_tecol = ua_te(:);
 %ua_tecol = ua_tecol(idx0);
 
-rmse = computeCost(ua_tecol,predictX);
-
+rmse = computeCost(ua_tecol,predictX)
+pause;
 
 %% get the top-k values and their indices
 % Get the top k recommendation for the l users specified at the begining
