@@ -143,7 +143,7 @@ rand('seed',8339);
 
 dimensions = [size(Tr.X,2) 250 50 10 2];
 lambda = 10^-6;
-dropout = 0.3;
+dropout = 0.43;
 
 [ trainedNN5 ] = trainNewBinaryNN(Tr.normX, Tr.y, dimensions, noEpochs, ...
     batchSize, plotFlag, learningRate, dropout, [], 'sigm' );
@@ -157,6 +157,19 @@ randPred = rand(size(Te.y))*2-1;
 % and plot all together, and get the performance of each method
 
 % this is to show it in the legend
-methodNames = {'NN with dropout = 0.3 and sigmoid', 'NN with L2 reg = 1/1000', 'NN with dropout = 0.3', 'NN with sigmoid activ.' 'Neural Network (NN)', 'Random'};
+methodNames = {'NN with dropout = 0.43 and sigmoid', 'NN with L2 reg = 1/1000', 'NN with dropout = 0.3', 'NN with sigmoid activ.' 'Neural Network (NN)', 'Random'};
 
 avgTPRList = evaluateMultipleMethods( Te.y > 0, [nnPredWithDropoutAndSigm, nnPredWithReg, nnPredWithDropout, nnPredSigm, nnPred,randPred], true, methodNames );
+
+%% comparing results - with PLR & SVD in workspace
+
+rand('state',8339);
+% let's also see how random predicition does
+randPred = rand(size(Te.y))*2-1;
+
+% and plot all together, and get the performance of each method
+
+% this is to show it in the legend
+methodNames = {'SVM with RBF, sigma = 81', 'PLR with lambda = 44', 'NN with L2 weight = 10^6 dropout = 0.43 and sigmoid', 'NN with L2 reg = 1/1000', 'NN with dropout = 0.43', 'NN with sigmoid activ.' 'Neural Network (NN)', 'Random'};
+
+avgTPRList = evaluateMultipleMethods( Te.y > 0, [SVMSoftpredictions, PLRPred, nnPredWithDropoutAndSigm, nnPredWithReg, nnPredWithDropout, nnPredSigm, nnPred,randPred], true, methodNames );
