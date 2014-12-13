@@ -1,8 +1,8 @@
 % youssef's playing with the data script, project 2
 
-clear all;
-close all;
-clc
+% clear all;
+% close all;
+% clc
 
 projectDir = '/users/youssef/Documents/Matlab/PCML/Projects/Project 2';
 addpath(genpath(projectDir));
@@ -141,7 +141,7 @@ nnPredWithDropoutAndSigm = predictNNBinaryOutput(Te.normX, trainedNN4 );
 
 rand('seed',8339);
 
-dimensions = [size(Tr.X,2) 50 25 10 2];
+dimensions = [size(Tr.X,2) 250 50 10 2];
 lambda = 10^-6;
 dropout = 0.3;
 

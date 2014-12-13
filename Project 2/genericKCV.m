@@ -124,13 +124,28 @@ parfor s = 1:noOfSeeds
                     dimensions = [size(tXTr, 2) dimensions];
                     
                     if isfield(constantNNoptions, 'dropout')
-                        % we're varying the L2 weight and keeping the
-                        % dropout constant in this case
                         
-                        dropout = constantNNoptions.dropout;
-                        
-                        model = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
-                            batchSize, 0, learningRate, dropout, parameter(i), activFun );
+                        if isfield(constantNNoptions, 'L2Weight')
+                            % both L2 weight and dropout are fixed, then
+                            % changing the dimensions of the NN
+                            
+                            dropout = constantNNoptions.dropout;
+                            L2Weight = constantNNoptions.L2Weight;
+                            
+                            dimensions = [size(tXTr, 2) parameter{i}];
+                            
+                            model = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                                batchSize, 0, learningRate, dropout, L2Weight, activFun );
+                        else
+
+                            % we're varying the L2 weight and keeping the
+                            % dropout constant in this case
+
+                            dropout = constantNNoptions.dropout;
+
+                            model = fittingFunction( tXTr, yTr, dimensions, noEpochs,...
+                                batchSize, 0, learningRate, dropout, parameter(i), activFun );
+                        end
                         
                     elseif isfield(constantNNoptions, 'L2Weight')      
                         % we're varying the dropout and keeping the
