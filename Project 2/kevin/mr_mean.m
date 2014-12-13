@@ -21,6 +21,4 @@ Ytest_weak_pred(idxw) = repm_weak(idxw);
 Ytest_strong_pred(idxs) = repm_strong(idxs);
 rmse = sqrt(2*computeCost(Ytest_weak_pairs,Ytest_weak_pred))    
 %%
-
 save('songPred', 'Ytest_strong_pred', 'Ytest_weak_pred');
-
