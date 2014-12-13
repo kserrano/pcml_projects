@@ -6,7 +6,7 @@ splitData;
 ua_tr = Ytrain_new; % users-artists 
 ua_te = Ytest_weak;
 S = artistName;
-
+%%
 
 rmse = wrapperCF(ua_tr,ua_te,S);
 

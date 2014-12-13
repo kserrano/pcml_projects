@@ -4,9 +4,26 @@ function predictX = wrapperCF( ua_tr, ua_te, S )
 % ua_tr_tr : Ytrain_train
 % ua_tr_te : Ytrain_test 
 % S : Artists_name
-%%
-
-
+%% top-k count for u users
+k = 5;
+u = [1;109;472;788;982];
+l = length(u);
+topKL = cell(l+1,k+1);
+for j = 2:k+1
+    topKL(1,j)={j-1};
+end
+topKL_rec = topKL;
+for i = 1:l
+    [sortX,sortIdx] = sort(ua_tr(u(i),:),'descend'); % sort the scores for user bob
+    maxKVal = sortX(1:k);
+    maxKindx = sortIdx(1:k);
+    topKArtists = S(maxKindx); % get the name of the artists
+    topKL(i+1,1) = {i};
+    topKL(i+1,2:end) = topKArtists;
+end
+topKL
+fprintf('Top-k for l selected users. Ready to process with recommendation. It can take some time.\n Press to continue...');
+pause;
 
 %% number of listening in average per user
 users_mean = computeMeanPerUser(ua_tr);
@@ -64,7 +81,7 @@ fullSu = full(Su);
 X = sparse(Su * ua_tr);
 
 %% Get the score for each 0
-keyboard
+
 umrep = repmat(users_mean,1,size(X,2));
 X = X';
 ua_col= X(:);
@@ -81,28 +98,24 @@ predictX = ua_col.*umrep;
 ua_te = ua_te';
 ua_tecol = ua_te(:);
 %ua_tecol = ua_tecol(idx0);
-keyboard
-rmse = computeCost(ua_tecol,predictX)
+
+rmse = computeCost(ua_tecol,predictX);
 
 
 %% get the top-k values and their indices
-k = 5;
-l = 5;
-% Get the top k recommendation for the l first users
-topKL = cell(l+1,k+1);
-for j = 2:k+1
-    topKL(1,j)={j-1};
-end
+% Get the top k recommendation for the l users specified at the begining
+
 for i = 1:l
     % check if we remove the non-predicted values
-    [sortX,sortIdx] = sort(X(i,:),'descend'); % sort the scores for user bob
+    [sortX,sortIdx] = sort(X(u(i),:),'descend'); % sort the scores for user bob
     maxKVal = sortX(1:k);
     maxKindx = sortIdx(1:k);
     topKArtists = S(maxKindx); % get the name of the artists
-    topKL(i+1,1) = {i};
-    topKL(i+1,2:end) = topKArtists;
+    topKL_rec(i+1,1) = {i};
+    topKL_rec(i+1,2:end) = topKArtists;
 end
-
+topKL_rec
+fprintf('Top-k recommendation for the selected users.');
 
 end
 
