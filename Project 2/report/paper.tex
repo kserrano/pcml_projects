@@ -40,7 +40,7 @@ Kevin Serrano\\EPFL\\
 \maketitle
 
 \begin{abstract}
-
+In this project we are given two problems: that of predicting the music listening counts for a given set of users based on their previous listening behaviour and friendship relations; and that of recognizing the presence of people no images. This report discusses preliminary observations on the given training data, and then results of testing various ML methods for prediction / classification.
 \end{abstract}
 
 \section{Exploratory Data analysis}
@@ -66,10 +66,12 @@ One clear conclusion that can be drawn here is that internal sigmoid activation 
 Clearly, each of these additions to the basic NN model improves things, on its own, a bit. However when they are applied together, things improve considerably (as indicated by the last cited and quite high TPRs). Of course, the values for these parameters (dropout and $L_2$ penalty) were chosen arbitrarily. Similarly, Penalized Logistic regression can have a different optimal lambda, which should be cross-validated, and might result in higher TPR. 
 
 We cross-validated parameters for the NN: namely the dropout, $L_2$ weight and dimension (depth mostly). Following are the corresponding plots, respectively. We can see that a dropout value of 0.43 is actually the best one to choose (the one with minimal test error, red curve) This was done for 15 values of the dropout, $k=4$, and 15 different seeds. We then cross-validated the $L_2$ weight penalty parameter for NN and obtained an optimal TPR of 81.45\% for a weight penalty of $10^{-6}$ (while setting the dropout to a static value of 0.43). We used 15 seeds and 20 values of the $L_2$ weight, with $k = 4$.
+
+A last thing we wanted to cross validate was the depth, but due to time restrictions and a huge computational workload for doing so (for a high number of units in profound NNs), we simply decided to pick dimensions based on a try out of various ones by hand.
 \begin{figure}
 \centering     %%% not \center
-\subfigure[NN with various dropouts]{\label{fig:histC}\includegraphics[width=0.49\textwidth]{images/NNKCVplotdropout.png}}
-\subfigure[NN with various L2 weight penalties]{\label{fig:loghist}\includegraphics[width=0.49\textwidth]{images/NNKCVplotL2weight.png}}
+\subfigure[NN with various dropouts]{\label{fig:nnkcvdrop}\includegraphics[width=0.49\textwidth]{images/NNKCVplotdropout.png}}
+\subfigure[NN with various L2 weight penalties]{\label{fig:nnkcvl2}\includegraphics[width=0.49\textwidth]{images/NNKCVplotL2weight.png}}
 \caption{Test errors}
 \end{figure}
 
@@ -89,9 +91,12 @@ We then tried using $k-$means on the same train and test sets used for the previ
 \subsection{Support Vector Machine}
 The next method we tried to apply on the people detection dataset was SVM. We used the \texttt{fitcsvm} and \texttt{predict} functions of MATLAB, to be able to obtain posteriors probabilities and not just hard assignments. We tested plain old SVM, with a linear kernel, and by taking a slight transform of the posterior we were able to obtain a TPR of 80.59 \%. We tried varying the $C$ constant parameter, trying values of 0.1, 0.5, 2 and 5, however they all gave the same TPR. We then tried using an RBF kernel, with $\sigma$ values of 0.5, 1 and 2, but they all gave a very low, consistent TPR of 0.0582 \%. This is very similar to what we get by simply predicting a $-1$ (no-person) for all the images. The prospects for the basic variant of this method provided good performance, but its lack of flexibility for further improvement makes us believe we should opt for another ML method for this dataset instead.
 
+We then launched several small cross-validation tests and determined that the best SVM variant was the one using the RBF kernel and a $\sigma$ of 81 (plots not shown here for brevity)
+
+A comparison plot for fits using the staff-provided data split and seed, using the various methods, is given in Figure \ref{fig:pdplot}, using the same seed. It gives the test error equivalent (TPR) for each one.
 \begin{figure}
 \centering
-\includegraphics[width=1\textwidth]{images/TPRplot.png}
+\includegraphics[width=1\textwidth]{images/PDTPRcomparisonplots.png}
 \caption{Comparison of different methods for People detection}
 \label{fig:pdplot}
 \end{figure}
@@ -127,19 +132,48 @@ One of the simplest prediction method is to use averages to predict. The first t
 Then we applied the log transformation to obtain a more Gaussian input as seen in Figure \ref{fig:loghist}. We then compute the RMSE based on the same principle as before and rescale the result with the exponential to obtain an RMSE of 4130 (8.3 in log scale), which is already much better.
 
 \subsection{Collaborative-filtering}
-Let $UA$ (users-artists) be equal to $Y_train$. The values inside the matrix are the number of time an user heard an artist. One of the principle features of the problem now is to say whether a user “likes” an artist of not, and ideally to know how much.
+Let $UA$ (users-artists) be equal to $Y_train$. We split the data into a training set $ua_{tr}$ and a test set $ua_{te}$. The values inside the matrix are the number of time an user heard an artist. One of the principle features of the problem now is to say whether a user “likes” an artist of not, and ideally to know how much.
 
 We first tried to normalize each row independently so that we will get values between 0 and 1.  Then we applied the following method : We created the matrix $P$, which is a diagonal matrix where each value in the diagonal is the total listening count for each user, (there are problems with users with total count $= 0$, however those don’t exist in our dataset). Hence, this matrix is invertible.
 
-Using this inverse we can compute the similarity between users. At this point we don’t take into account the social graph, but it looks promising to refer later (if we can assume that friends are more likely to like the same artists). The similarity matrix X should contain 1 in the diagonal ( a user is maximally similar to himself). However this is not the case in our dataset : when we computed the similarity of the user using the formula $UA\cdot UA^T$ then we obtain the total number of listening in common with other users. That means to get a diagonal of $1$’s, the matrix $P$ should be defined differently : instead of having a diagonal matrix where each entry is  total listening count of user $i$, we should simply have the same values as $UA \cdot UA^T$ in the diagonal matrix $P$ and $0$ elsewhere. Then we will measure the cosine similarity between another user. Note that this is possible to do without normalizing the data, as we obtain the same results regardless.
+Using this inverse we can compute the similarity matrix $S_u$ between users. At this point we don’t take into account the social graph, but it looks promising to refer later (if we can assume that friends are more likely to like the same artists). The similarity matrix $S_u$ should contain 1 in the diagonal ( a user is maximally similar to himself). However this is not the case in our dataset : when we computed the similarity of the user using the formula $ua_{tr}\cdot ua_{tr}^T$ then we obtain the total number of listening in common with other users. That means to get a diagonal of $1$’s, the matrix $P$ should be defined differently : instead of having a diagonal matrix where each entry is  total listening count of user $i$, we should simply have the same values as $ua_{tr} \cdot ua_{tr}^T$ in the diagonal matrix $P$ and $0$ elsewhere. Then we will measure the cosine similarity between another user. Note that this is possible to do without normalizing the data, as we obtain the same results regardless. Computing the average of listing by users $u_a$ and multiply this with the scores obtained from the similarity matrix ($S_c = S_u \cdot ua_{tr}$). After playing with numbers, we discovered that we can predict the counts $P_r = (X\cdot u_a)^{0.8}$ where $P_r$ is the predictions. When we compare this prediction with the test set $ua_{te}$, we obtain a rmse of $3.06$ in log scale, which is quite accurate. This is the weak prediction.
 
-One idea is to use the social graph along with the similarity matrix we obtained is to see if it is indeed the case that friends are similar users ( listeners), but not the other way around. Therefore, when we want to add a new users and predict his counts (taste in music), one possibility would be to use the information in the social graph and then use the similarity matrix to predict.
+One idea is to use the social graph along with the similarity matrix we obtained is to see if it is indeed the case that friends are similar users ( listeners), but not the other way around. Therefore, when we want to add a new users and predict his counts (taste in music), one possibility would be to use the information in the social graph and then use the similarity matrix to predict
 
-So finding the social relation between users requires finding the position of $1$s in the social graph. With these positions we can check what is the similarity between friends and compute the average similarity. We obtained experimentally an average of $0.2145$, which means their taste are not as correlated as we thought, putting the usefulness of the social graph into question again. We can use this number when we want to predict counts for a new user: we can look into the social graph to obtain the relationship between the new user and all existing users and then decide on their similarity between them. To predict counts we can sum the counts for the friend's user for a particular artist and divide it by the number of his friends.
+So finding the social relation between users requires finding the position of $1$s in the social graph. With these positions we can check what is the similarity between friends and compute the average similarity. We obtained experimentally an average of $0.2145$, which means their taste are not as correlated as we thought, putting the usefulness of the social graph into question again. We can use this number when we want to predict counts for a new user: we can look into the social graph to obtain the relationship between the new user and all existing users and then decide on their similarity between them. This similarity for new user $i$ is computed as the mean similarity of all his friends in the known set ($Y_{train}$) for a particular user $j$. We obtain a new similarity matrix and can compute the predictions. Basically this is the same idea as before but only using friends of the new users.
+\subsubsection{Recommendations}
+Using the similarity matrix $S_u$ and the dataset, we computed $S_c = S_u \cdot UA$ as before to obtained the scores. With these scores we can recommend artists to existing users. For example in Figure \ref{fig:rec}, using the first user in the dataset, we see his top-5 listening and the top-5 recommendations. The method to compute this recommendation is called user-user collaborative-filtering.
+\begin{figure}[h!]
+\centering     %%% not \center
+\subfigure[Top-5]{\begin{tabular}{c|c|}
+ & User 1\\
+ \hline
+1 & Morrissey\\
+2 & The Smiths\\
+3 & Elvis Presley\\
+4 & The Housemartins \\
+5 & Blur\\
+\hline
+\end{tabular}}
+\subfigure[Top-5 recommendations]{\begin{tabular}{c|c|}
+ & User 1\\
+ \hline
+1 & Just Surrender\\
+2 & Huun-Huur-Tu\\
+3 & Beverly Kenney\\
+4 & Imperative Reaction \\
+5 & Maze featuring Frankie Beverly\\
+\hline
+\end{tabular}}
+
+\caption{Top-5 recommendation for user 1}
+\label{fig:rec}
+\end{figure}
+
 \section{Summary}
-
+For people detection, we decided to opt for NN with the cross-validated parameters instead of the otherwise best-TPR simple SVM method. That is because we found the output of NN predictions to be more stable than that of SVM (score between -1 and 1, in contrast to usually off-interval output for SVM). The final parameters used are $L_2$ weight = $10^{-6}$, a dropout of 0.43 and dimensions of $[D 250 50 10 2]$, and using sigmood internally, we also increased the number of epochs to 40.
 \subsubsection*{Acknowledgments}
-
+We would like to thanks the teaching team for their availability during the exercise sessions and office hours but also on the forum. We also want to thanks Youssef who organized the milestone of the project.
 \subsubsection*{References}
 Kevin Murphy, Machine Learning : A Probabilistic Perspective {\em The MIT Press
 Cambridge, Massachusetts
