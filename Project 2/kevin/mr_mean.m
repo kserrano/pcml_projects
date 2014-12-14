@@ -29,7 +29,10 @@ idxw = Ytest_weak_pairs>0;
 idxs = Ytest_strong_pairs>0;
 repm_weak = exp(repm_weak);
 repm_weak(~idxw) = 0;
-
+repm_strong = exp(repm_strong);
+repm_strong(~idxs) = 0;
+Ytest_weak_pred=sparse(repm_weak);
+Ytest_strong_pred = sparse(repm_strong);
 % Ytest_strong_pred(idxs) = repm_strong(idxs);
 
 %%

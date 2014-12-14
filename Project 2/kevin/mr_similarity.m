@@ -56,6 +56,7 @@ Ytest_weak_pred(idxw) = p;
 s = PredStrong(idxs);
 s(s==0)=1;
 Ytest_strong_pred(idxs) = s;
-
+Ytest_weak_pred = exp(Ytest_weak_pred);
+Ytest_strong_pred = exp(Ytest_strong_pred);
 save('songPred', 'Ytest_strong_pred', 'Ytest_weak_pred');
 
