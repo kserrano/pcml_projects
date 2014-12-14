@@ -40,7 +40,7 @@ Kevin Serrano\\EPFL\\
 \maketitle
 
 \begin{abstract}
-In this project we are given two problems: that of predicting the music listening counts for a given set of users based on their previous listening behaviour and friendship relations; and that of recognizing the presence of people no images. This report discusses preliminary observations on the given training data, and then results of testing various ML methods for prediction / classification.
+In this project we are given two problems: that of predicting the music listening counts for a given set of users based on their previous listening behaviour and friendship relations; and that of recognizing the presence of people in images. This report discusses preliminary observations on the given training data, and then results of testing various ML methods for prediction / classification.
 \end{abstract}
 
 \section{Exploratory Data analysis}
@@ -75,7 +75,7 @@ A last thing we wanted to cross validate was the depth, but due to time restrict
 \caption{Test errors}
 \end{figure}
 
-\subsection{Penalize Logistic regression (cross-validation for $\lambda$}
+\subsection{Penalize Logistic regression (cross-validation for $\lambda$)}
 Penalized logistic regression was cross-validated (for the lambda parameter) to see which setting gives the best estimated TPR. The error metric taken was 1-TPR, which made simple sense. $\lambda$ values between $10^{-3}$ and $10^2$ were tested, 15 of them, and using 15 different seeds. So a total of $15 \cdot 15=225$ gradient descent runs for PLR were tried, giving the following plot (Figure \ref{fig:TEPLR})
 It seems that, roughly, the more we increase lambda, the better our test error equivalent (1-TPR, which is actually the False Negative Rate) is.
 \begin{figure}[h!]
