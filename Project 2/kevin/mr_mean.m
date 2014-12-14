@@ -32,6 +32,5 @@ repm_weak(~idxw) = 0;
 
 % Ytest_strong_pred(idxs) = repm_strong(idxs);
 
-rmse = rmse(Ytest_weak_pred, Ytest_weak_pairs);
 %%
 save('songPred', 'Ytest_strong_pred', 'Ytest_weak_pred');
