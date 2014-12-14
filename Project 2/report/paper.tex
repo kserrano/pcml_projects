@@ -132,7 +132,7 @@ One of the simplest prediction method is to use averages to predict. The first t
 Then we applied the log transformation to obtain a more Gaussian input as seen in Figure \ref{fig:loghist}. We then compute the RMSE based on the same principle as before and rescale the result with the exponential to obtain an RMSE of 4130 (8.3 in log scale), which is already much better.
 
 \subsection{Collaborative-filtering}
-Let $UA$ (users-artists) be equal to $Y_train$. We split the data into a training set $ua_{tr}$ and a test set $ua_{te}$. The values inside the matrix are the number of time an user heard an artist. One of the principle features of the problem now is to say whether a user “likes” an artist of not, and ideally to know how much.
+Let $UA$ (users-artists) be equal to $Y_{train}$. We split the data into a training set $ua_{tr}$ and a test set $ua_{te}$. The values inside the matrix are the number of time an user heard an artist. One of the principle features of the problem now is to say whether a user “likes” an artist of not, and ideally to know how much.
 
 We first tried to normalize each row independently so that we will get values between 0 and 1.  Then we applied the following method : We created the matrix $P$, which is a diagonal matrix where each value in the diagonal is the total listening count for each user, (there are problems with users with total count $= 0$, however those don’t exist in our dataset). Hence, this matrix is invertible.
 
@@ -171,7 +171,9 @@ Using the similarity matrix $S_u$ and the dataset, we computed $S_c = S_u \cdot 
 \end{figure}
 
 \section{Summary}
-For people detection, we decided to opt for NN with the cross-validated parameters instead of the otherwise best-TPR simple SVM method. That is because we found the output of NN predictions to be more stable than that of SVM (score between -1 and 1, in contrast to usually off-interval output for SVM). The final parameters used are $L_2$ weight = $10^{-6}$, a dropout of 0.43 and dimensions of $[D 250 50 10 2]$, and using sigmood internally, we also increased the number of epochs to 40.
+For people detection, we decided to opt for NN with the cross-validated parameters instead of the otherwise best-TPR simple SVM method. That is because we found the output of NN predictions to be more stable than that of SVM (score between -1 and 1, in contrast to usually off-interval output for SVM). The final parameters used are $L_2$ weight = $10^{-6}$, a dropout of 0.43 and dimensions of $[D \ 250 \ 50 \ 10 \  2]$, and using sigmood internally, we also increased the number of epochs to 40.\\
+
+For the music recommender we managed to recommend songs successfully to existing users based on their similarity with other users. We predicted the counts using different models with sometimes good and very bad results. Our best was the model based on the similarity (collaborative-filtering) for the weak prediction. Some other model could have been tested if we had more time, for example clustering.
 \subsubsection*{Acknowledgments}
 We would like to thanks the teaching team for their availability during the exercise sessions and office hours but also on the forum. We also want to thanks Youssef who organized the milestone of the project.
 \subsubsection*{References}
